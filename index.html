@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sibeh Shiok Personality Quiz</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Intro Screen -->
+        <div class="intro-screen active">
+            <div class="bouncing-mascots">
+                <div class="bouncing-emoji">🦁</div>
+                <div class="bouncing-emoji">🦦</div>
+                <div class="bouncing-emoji">🐝</div>
+                <div class="bouncing-emoji">🐱</div>
+                <div class="bouncing-emoji">🐵</div>
+            </div>
+            <div class="header">
+                <h1>Sibeh Shiok Personality Quiz</h1>
+                <p class="subtitle">Wow! Time to find out what kind of Singaporean you really are lah!</p>
+            </div>
+            <div class="intro-content">
+                <p style="font-size: 1.2em; margin-bottom: 20px;">This quiz is based on the Big Five Inventory (BFI-2-XS), but make it more shiok with local flavour! 🍜</p>
+                <ul>
+                    <li>📝 15 questions only (faster than waiting for your char kway teow)</li>
+                    <li>🎯 Based on validated psychology research</li>
+                    <li>😄 100% Singaporean context</li>
+                    <li>⚡ Takes about 2-3 minutes (shorter than MRT delay)</li>
+                </ul>
+                <p style="margin-top: 30px; color: #666;">Just answer honestly hor! No right or wrong answer one.</p>
+                <button class="start-btn" onclick="startQuiz()">Okay Lah, Let's Go! 🚀</button>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div class="quiz-screen">
+            <div class="header">
+                <h1>Sibeh Shiok Personality Quiz</h1>
+                <p class="subtitle">Answer based on how you normally behave lah</p>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar"></div>
+                    <div class="progress-percentage" id="progressPercentage">0%</div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-number" id="questionNumber">Question 1 of 30</div>
+                <div class="question-text" id="questionText"></div>
+                <div class="options" id="optionsContainer"></div>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn btn-prev" id="prevBtn" onclick="prevQuestion()">⬅️ Back</button>
+                <button class="btn btn-next" id="nextBtn" onclick="nextQuestion()">Next ➡️</button>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div class="results">
+            <div class="header">
+                <h1>🎉 Your Results!</h1>
+                <p class="subtitle">Here's what kind of Singaporean you are:</p>
+            </div>
+            <div id="resultsContainer"></div>
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="start-btn" onclick="location.reload()">Take Again? 🔄</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
