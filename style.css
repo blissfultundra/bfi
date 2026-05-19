@@ -490,6 +490,85 @@ body {
     font-size: 0.8em;
 }
 
+/* Healthcare Screening Section */
+.health-section {
+    margin-top: 50px;
+    padding: 30px;
+    background: #f8f9fa;
+    border-radius: 15px;
+    border-left: 5px solid #00B4DB;
+}
+
+.health-section h2 {
+    text-align: center;
+    color: #333;
+    font-size: 1.6em;
+    margin-bottom: 25px;
+}
+
+.health-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.health-card {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    border-left: 4px solid #00B4DB;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.health-question {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 0.95em;
+    line-height: 1.5;
+}
+
+.health-answer {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.health-answer strong {
+    color: #00B4DB;
+    font-weight: bold;
+}
+
+/* Export Section */
+.export-section {
+    text-align: center;
+    margin-top: 40px;
+    padding: 30px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+}
+
+.export-btn {
+    background: white;
+    color: #667eea;
+    padding: 15px 40px;
+    font-size: 1.1em;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.export-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.export-btn:active {
+    transform: translateY(-1px);
+}
+
 @media (max-width: 600px) {
     .container {
         padding: 20px;

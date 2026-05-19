@@ -1,29 +1,47 @@
-const questions = [
-            // Extraversion (E) - 3 items
-            { text: "You are the life of the party at gatherings and kopitiam sessions.", trait: "E", reverse: false },
-            { text: "You prefer to spend evenings at home alone rather than going out socially.", trait: "E", reverse: true },
-            { text: "You naturally start conversations with strangers on the MRT or at hawker centres.", trait: "E", reverse: false },
-            
-            // Agreeableness (A) - 3 items
-            { text: "You genuinely care about other people's feelings and try to be helpful.", trait: "A", reverse: false },
-            { text: "You can be blunt and direct, even if it might hurt someone's feelings.", trait: "A", reverse: true },
-            { text: "You believe most people are fundamentally good and trustworthy.", trait: "A", reverse: false },
-            
-            // Conscientiousness (C) - 3 items
-            { text: "Your workspace and desk are well-organized and tidy.", trait: "C", reverse: false },
-            { text: "You tend to leave things messy and just wing it as you go.", trait: "C", reverse: true },
-            { text: "You always plan ahead and rarely leave things until the last minute.", trait: "C", reverse: false },
-            
-            // Negative Emotionality/Neuroticism (N) - 3 items
-            { text: "You worry frequently about things that might go wrong.", trait: "N", reverse: false },
-            { text: "You stay calm and composed even when facing difficult situations.", trait: "N", reverse: true },
-            { text: "You often feel anxious or stressed, especially about work.", trait: "N", reverse: false },
-            
-            // Open-Mindedness (O) - 3 items
-            { text: "You love trying new experiences, whether it's new restaurants or activities.", trait: "O", reverse: false },
-            { text: "You prefer to stick with familiar routines rather than try new things.", trait: "O", reverse: true },
-            { text: "You enjoy having deep, intellectual conversations about ideas and concepts.", trait: "O", reverse: false }
+const baseQuestions = [
+            // Extraversion (E)
+            { text: "I am someone who tends to be quiet.", singlish: "I quite quiet person one.", trait: "E", reverse: true },
+            { text: "I am someone who is dominant, acts as a leader.", singlish: "I quite dominant, like to lead one.", trait: "E", reverse: false },
+            { text: "I am someone who is full of energy.", singlish: "I full of energy, very energetic lah.", trait: "E", reverse: false },
+
+            // Agreeableness (A)
+            { text: "I am someone who is compassionate, has a soft heart.", singlish: "I very compassionate, got soft heart lor.", trait: "A", reverse: false },
+            { text: "I am someone who is sometimes rude to others.", singlish: "I sometimes rude to people lah.", trait: "A", reverse: true },
+            { text: "I am someone who assumes the best about people.", singlish: "I assume the best about people, very trusting one.", trait: "A", reverse: false },
+
+            // Conscientiousness (C)
+            { text: "I am someone who tends to be disorganised.", singlish: "I tend to be quite messy and disorganised one.", trait: "C", reverse: true },
+            { text: "I am someone who has difficulty getting started on tasks.", singlish: "I got difficulty getting started on tasks, very procrastinator.", trait: "C", reverse: true },
+            { text: "I am someone who is reliable, can always be counted on.", singlish: "I reliable, can always count on me lor.", trait: "C", reverse: false },
+
+            // Negative Emotionality/Neuroticism (N)
+            { text: "I am someone who worries a lot.", singlish: "I worry lots, very kiasu lah.", trait: "N", reverse: false },
+            { text: "I am someone who tends to feel depressed, blue.", singlish: "I tend to feel depressed or blue lor.", trait: "N", reverse: false },
+            { text: "I am someone who is emotionally stable, not easily upset.", singlish: "I emotionally stable, not easily upset one.", trait: "N", reverse: true },
+
+            // Open-Mindedness (O)
+            { text: "I am someone who is fascinated by art, music, or literature.", singlish: "I fascinated by art, music, or literature lor.", trait: "O", reverse: false },
+            { text: "I am someone who has little interest in abstract ideas.", singlish: "I got no interest in abstract ideas one.", trait: "O", reverse: true },
+            { text: "I am someone who is original, comes up with new ideas.", singlish: "I original, always got new ideas lah.", trait: "O", reverse: false }
         ];
+
+        function getShuffledQuestions() {
+            const allQuestions = [];
+            baseQuestions.forEach(q => {
+                allQuestions.push({ text: q.text, trait: q.trait, reverse: q.reverse, version: 'english' });
+                allQuestions.push({ text: q.singlish, trait: q.trait, reverse: q.reverse, version: 'singlish' });
+            });
+
+            // Fisher-Yates shuffle
+            for (let i = allQuestions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [allQuestions[i], allQuestions[j]] = [allQuestions[j], allQuestions[i]];
+            }
+
+            return allQuestions;
+        }
+
+        let questions = getShuffledQuestions();
 
         const options = [
             { text: "Definitely lah", value: 5 },
@@ -37,34 +55,50 @@ const questions = [
             E: {
                 name: 'Party Lion',
                 emoji: '🦁',
-                description: 'Wah, you damn happening lah! Super outgoing, damn shiok to hang with one.'
+                description: 'Wah, you damn happening lah! Super outgoing, damn shiok to hang with one.',
+                color: '#FF6B6B',
+                colorLight: '#FF8E53'
             },
             A: {
                 name: 'Chill Otter',
                 emoji: '🦦',
-                description: 'Steady lah you! Very nice person, always help people and don\'t like to quarrel.'
+                description: 'Steady lah you! Very nice person, always help people and don\'t like to quarrel.',
+                color: '#00B4DB',
+                colorLight: '#0083B0'
             },
             C: {
                 name: 'Boss Bee',
                 emoji: '🐝',
-                description: 'Wah you very on one! Super organized, can always count on you to chiong and finish everything.'
+                description: 'Wah you very on one! Super organized, can always count on you to chiong and finish everything.',
+                color: '#FFD89B',
+                colorLight: '#FFC92A'
             },
             N: {
                 name: 'Kiasu Kitten',
                 emoji: '🐱',
-                description: 'You quite kiasu leh! But that means you care a lot and always think carefully about things.'
+                description: 'You quite kiasu leh! But that means you care a lot and always think carefully about things.',
+                color: '#C061F0',
+                colorLight: '#E75480'
             },
             O: {
                 name: 'Curious Monkey',
                 emoji: '🐵',
-                description: 'Wah you very creative sia! Always got new ideas and like to try different things.'
+                description: 'Wah you very creative sia! Always got new ideas and like to try different things.',
+                color: '#11998E',
+                colorLight: '#38EF7D'
             }
         };
 
+        const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby8yEjFMgvB2tCtk39hyw19Vmt0AcvjaslCuZjsphpwHdwzzBtoi2XON4vGpLtyyY2e/exec'; // User will set this
         let currentQuestion = 0;
-        let answers = new Array(15).fill(null);
+        let answers = new Array(30).fill(null);
+        let lastResults = null;
+        let lastDominantTrait = null;
 
         function startQuiz() {
+            questions = getShuffledQuestions();
+            answers = new Array(30).fill(null);
+            currentQuestion = 0;
             document.querySelector('.intro-screen').classList.remove('active');
             document.querySelector('.quiz-screen').classList.add('active');
             displayQuestion();
@@ -72,12 +106,12 @@ const questions = [
 
         function displayQuestion() {
             const q = questions[currentQuestion];
-            document.getElementById('questionNumber').textContent = `Question ${currentQuestion + 1} of 15`;
+            document.getElementById('questionNumber').textContent = `Question ${currentQuestion + 1} of 30`;
             document.getElementById('questionText').textContent = q.text;
-            
+
             const optionsContainer = document.getElementById('optionsContainer');
             optionsContainer.innerHTML = '';
-            
+
             options.forEach((option, index) => {
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
@@ -99,7 +133,7 @@ const questions = [
         }
 
         function updateProgress() {
-            const progress = ((currentQuestion + 1) / 15) * 100;
+            const progress = ((currentQuestion + 1) / 30) * 100;
             document.getElementById('progressBar').style.width = progress + '%';
             document.getElementById('progressPercentage').textContent = Math.round(progress) + '%';
         }
@@ -107,8 +141,8 @@ const questions = [
         function updateButtons() {
             document.getElementById('prevBtn').disabled = currentQuestion === 0;
             const nextBtn = document.getElementById('nextBtn');
-            
-            if (currentQuestion === 14) {
+
+            if (currentQuestion === 29) {
                 nextBtn.textContent = 'See Results! 🎉';
                 nextBtn.disabled = answers[currentQuestion] === null;
             } else {
@@ -119,8 +153,8 @@ const questions = [
 
         function nextQuestion() {
             if (answers[currentQuestion] === null) return;
-            
-            if (currentQuestion < 14) {
+
+            if (currentQuestion < 29) {
                 currentQuestion++;
                 displayQuestion();
             } else {
@@ -144,27 +178,43 @@ const questions = [
                 O: { scores: [], name: 'Open-Mindedness', emoji: '🌟' }
             };
 
+            const englishTraits = JSON.parse(JSON.stringify(traits));
+            const singlishTraits = JSON.parse(JSON.stringify(traits));
+
             questions.forEach((q, index) => {
                 let score = answers[index];
                 if (q.reverse) {
-                    score = 6 - score; // Reverse scoring
+                    score = 6 - score;
                 }
-                traits[q.trait].scores.push(score);
+
+                if (q.version === 'english') {
+                    englishTraits[q.trait].scores.push(score);
+                } else {
+                    singlishTraits[q.trait].scores.push(score);
+                }
             });
 
-            const results = {};
-            Object.keys(traits).forEach(key => {
-                const scores = traits[key].scores;
-                const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-                results[key] = {
-                    score: avg,
-                    percentage: ((avg - 1) / 4) * 100,
-                    name: traits[key].name,
-                    emoji: traits[key].emoji
-                };
-            });
+            const calculateResults = (traitsObj) => {
+                const results = {};
+                Object.keys(traitsObj).forEach(key => {
+                    const scores = traitsObj[key].scores;
+                    const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+                    results[key] = {
+                        score: avg,
+                        percentage: ((avg - 1) / 4) * 100,
+                        name: traitsObj[key].name,
+                        emoji: traitsObj[key].emoji,
+                        color: mascots[key].color,
+                        colorLight: mascots[key].colorLight
+                    };
+                });
+                return results;
+            };
 
-            return results;
+            return {
+                english: calculateResults(englishTraits),
+                singlish: calculateResults(singlishTraits)
+            };
         }
 
         function getDescription(trait, score) {
@@ -197,22 +247,74 @@ const questions = [
         function getDominantTrait(results) {
             let maxScore = -Infinity;
             let dominantTrait = null;
-            
-            Object.keys(results).forEach(key => {
-                if (results[key].score > maxScore) {
-                    maxScore = results[key].score;
+
+            Object.keys(results.english).forEach(key => {
+                if (results.english[key].score > maxScore) {
+                    maxScore = results.english[key].score;
                     dominantTrait = key;
                 }
             });
-            
+
             return dominantTrait;
         }
+
+        function postResultsToSheet(results, dominantTrait) {
+            const englishScores = {};
+            const singlishScores = {};
+
+            Object.keys(results.english).forEach(key => {
+                englishScores[key] = parseFloat(results.english[key].score.toFixed(2));
+                singlishScores[key] = parseFloat(results.singlish[key].score.toFixed(2));
+            });
+
+            const exportData = {
+                timestamp: new Date().toLocaleString(),
+                dominantTrait: dominantTrait,
+                mascot: mascots[dominantTrait].name,
+                english_extraversion: englishScores.E,
+                english_agreeableness: englishScores.A,
+                english_conscientiousness: englishScores.C,
+                english_neuroticism: englishScores.N,
+                english_openMindedness: englishScores.O,
+                singlish_extraversion: singlishScores.E,
+                singlish_agreeableness: singlishScores.A,
+                singlish_conscientiousness: singlishScores.C,
+                singlish_neuroticism: singlishScores.N,
+                singlish_openMindedness: singlishScores.O
+            };
+
+            if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+                console.log('Google Sheets integration not configured. Results data:', exportData);
+                return;
+            }
+
+            fetch(GOOGLE_APPS_SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify(exportData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Results posted to Google Sheets');
+            })
+            .catch(error => {
+                console.error('Error posting to Google Sheets:', error);
+            });
+        }
+
+
 
         function showResults() {
             const results = calculateScores();
             const dominantTrait = getDominantTrait(results);
             const mascot = mascots[dominantTrait];
-            
+
+            // Store globally
+            lastResults = results;
+            lastDominantTrait = dominantTrait;
+
+            // Post results to Google Sheet
+            postResultsToSheet(results, dominantTrait);
+
             document.querySelector('.quiz-screen').classList.remove('active');
             document.querySelector('.results').classList.add('active');
 
@@ -221,7 +323,8 @@ const questions = [
 
             // Main mascot section
             const mascotSection = document.createElement('div');
-            mascotSection.className = 'mascot-main-section';
+            mascotSection.className = `mascot-main-section highlighted highlighted-${dominantTrait}`;
+            mascotSection.style.background = `linear-gradient(135deg, ${mascots[dominantTrait].color} 0%, ${mascots[dominantTrait].colorLight} 100%)`;
             mascotSection.innerHTML = `
                 <div class="mascot-main">
                     <div class="mascot-emoji-large">${mascot.emoji}</div>
@@ -231,12 +334,13 @@ const questions = [
             `;
             container.appendChild(mascotSection);
 
-            // Traits section
-            const traitsSection = document.createElement('div');
-            traitsSection.className = 'traits-section';
-            
-            Object.keys(results).forEach(key => {
-                const trait = results[key];
+            // Traits section with unique colors - English version
+            const englishTraitsSection = document.createElement('div');
+            englishTraitsSection.className = 'traits-section';
+            englishTraitsSection.innerHTML = '<h2>English Version</h2>';
+
+            Object.keys(results.english).forEach(key => {
+                const trait = results.english[key];
                 const card = document.createElement('div');
                 card.className = 'trait-card';
                 card.innerHTML = `
@@ -254,18 +358,51 @@ const questions = [
                         ${getDescription(key, trait.percentage)}
                     </div>
                 `;
-                traitsSection.appendChild(card);
+                englishTraitsSection.appendChild(card);
             });
-            container.appendChild(traitsSection);
+            container.appendChild(englishTraitsSection);
+
+            // Traits section - Singlish version
+            const singlishTraitsSection = document.createElement('div');
+            singlishTraitsSection.className = 'traits-section';
+            singlishTraitsSection.innerHTML = '<h2>Singlish Version</h2>';
+
+            Object.keys(results.singlish).forEach(key => {
+                const trait = results.singlish[key];
+                const card = document.createElement('div');
+                card.className = 'trait-card';
+                card.innerHTML = `
+                    <div class="trait-header">
+                        <div class="trait-name">
+                            <span class="emoji">${trait.emoji}</span>
+                            ${trait.name}
+                        </div>
+                        <div class="trait-score">${trait.percentage.toFixed(0)}%</div>
+                    </div>
+                    <div class="trait-bar">
+                        <div class="trait-bar-fill" style="width: ${trait.percentage}%"></div>
+                    </div>
+                    <div class="trait-description">
+                        ${getDescription(key, trait.percentage)}
+                    </div>
+                `;
+                singlishTraitsSection.appendChild(card);
+            });
+            container.appendChild(singlishTraitsSection);
+
+            // Healthcare Screening Results section (hidden from display but data collected)
+            // const healthSection = document.createElement('div');
+            // healthSection.className = 'health-section';
+            // Removed from results display
 
             // All mascots section
             const allMascotsSection = document.createElement('div');
             allMascotsSection.className = 'all-mascots-section';
             allMascotsSection.innerHTML = '<h2>All your friends leh!</h2>';
-            
+
             const mascotsGrid = document.createElement('div');
             mascotsGrid.className = 'mascots-grid';
-            
+
             Object.keys(mascots).forEach(key => {
                 const m = mascots[key];
                 const isUserMascot = key === dominantTrait;
@@ -279,7 +416,7 @@ const questions = [
                 `;
                 mascotsGrid.appendChild(mascotCard);
             });
-            
+
             allMascotsSection.appendChild(mascotsGrid);
             container.appendChild(allMascotsSection);
 
@@ -289,6 +426,42 @@ const questions = [
                     bar.style.width = bar.style.width;
                 });
             }, 100);
+        }
+
+        function handleExport() {
+            if (lastResults && lastDominantTrait) {
+                const englishScores = {};
+                const singlishScores = {};
+
+                Object.keys(lastResults.english).forEach(key => {
+                    englishScores[key] = parseFloat(lastResults.english[key].score.toFixed(2));
+                    singlishScores[key] = parseFloat(lastResults.singlish[key].score.toFixed(2));
+                });
+
+                const csvContent = [
+                    ['Personality Quiz Results'],
+                    ['Timestamp', new Date().toLocaleString()],
+                    ['Dominant Trait', mascots[lastDominantTrait].name],
+                    [''],
+                    ['ENGLISH VERSION'],
+                    ['Trait', 'Score', 'Percentage'],
+                    ...Object.keys(lastResults.english).map(key => [
+                        lastResults.english[key].name,
+                        englishScores[key],
+                        lastResults.english[key].percentage.toFixed(0) + '%'
+                    ]),
+                    [''],
+                    ['SINGLISH VERSION'],
+                    ['Trait', 'Score', 'Percentage'],
+                    ...Object.keys(lastResults.singlish).map(key => [
+                        lastResults.singlish[key].name,
+                        singlishScores[key],
+                        lastResults.singlish[key].percentage.toFixed(0) + '%'
+                    ])
+                ].map(row => Array.isArray(row) ? row.join(',') : row).join('\n');
+
+                downloadCSV(csvContent);
+            }
         }
 
         // Initialize
