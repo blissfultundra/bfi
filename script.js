@@ -14,7 +14,7 @@ const baseQuestions = [
             { text: "I am someone who has difficulty getting started on tasks.", singlish: "I got difficulty getting started on tasks, very procrastinator.", trait: "C", reverse: true },
             { text: "I am someone who is reliable, can always be counted on.", singlish: "I reliable, can always count on me lor.", trait: "C", reverse: false },
 
-            // Negative Emotionality/Neuroticism (N)
+            // Emotionality/Neuroticism (N)
             { text: "I am someone who worries a lot.", singlish: "I worry lots, very kiasu lah.", trait: "N", reverse: false },
             { text: "I am someone who tends to feel depressed, blue.", singlish: "I tend to feel depressed or blue lor.", trait: "N", reverse: false },
             { text: "I am someone who is emotionally stable, not easily upset.", singlish: "I emotionally stable, not easily upset one.", trait: "N", reverse: true },
@@ -89,11 +89,12 @@ const baseQuestions = [
             }
         };
 
-        const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby8yEjFMgvB2tCtk39hyw19Vmt0AcvjaslCuZjsphpwHdwzzBtoi2XON4vGpLtyyY2e/exec'; // User will set this
+        const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzm_qp7MI7xESadsmg2yi8XEMh4sKtjUlbtPGyPN12bBboMk2oE0F8IWYQV0uU6lm8/exec"; // User will set this
         let currentQuestion = 0;
         let answers = new Array(30).fill(null);
         let lastResults = null;
         let lastDominantTrait = null;
+        let confettiPlayed = false;
 
         function startQuiz() {
             questions = getShuffledQuestions();
@@ -174,7 +175,7 @@ const baseQuestions = [
                 E: { scores: [], name: 'Extraversion', emoji: '🎉' },
                 A: { scores: [], name: 'Agreeableness', emoji: '🤝' },
                 C: { scores: [], name: 'Conscientiousness', emoji: '📋' },
-                N: { scores: [], name: 'Negative Emotionality', emoji: '😰' },
+                N: { scores: [], name: 'Emotionality', emoji: '😰' },
                 O: { scores: [], name: 'Open-Mindedness', emoji: '🌟' }
             };
 
@@ -217,6 +218,24 @@ const baseQuestions = [
             };
         }
 
+        function getAverageResults(results) {
+            const average = {};
+            Object.keys(results.english).forEach(key => {
+                const english = results.english[key];
+                const singlish = results.singlish[key];
+                const score = (english.score + singlish.score) / 2;
+                average[key] = {
+                    score,
+                    percentage: ((score - 1) / 4) * 100,
+                    name: english.name,
+                    emoji: english.emoji,
+                    color: english.color,
+                    colorLight: english.colorLight
+                };
+            });
+            return average;
+        }
+
         function getDescription(trait, score) {
             const descriptions = {
                 E: {
@@ -245,12 +264,13 @@ const baseQuestions = [
         }
 
         function getDominantTrait(results) {
+            const average = getAverageResults(results);
             let maxScore = -Infinity;
             let dominantTrait = null;
 
-            Object.keys(results.english).forEach(key => {
-                if (results.english[key].score > maxScore) {
-                    maxScore = results.english[key].score;
+            Object.keys(average).forEach(key => {
+                if (average[key].score > maxScore) {
+                    maxScore = average[key].score;
                     dominantTrait = key;
                 }
             });
@@ -269,18 +289,18 @@ const baseQuestions = [
 
             const exportData = {
                 timestamp: new Date().toLocaleString(),
-                dominantTrait: dominantTrait,
+                dominant_trait: dominantTrait,
                 mascot: mascots[dominantTrait].name,
                 english_extraversion: englishScores.E,
                 english_agreeableness: englishScores.A,
                 english_conscientiousness: englishScores.C,
                 english_neuroticism: englishScores.N,
-                english_openMindedness: englishScores.O,
+                english_open_mindedness: englishScores.O,
                 singlish_extraversion: singlishScores.E,
                 singlish_agreeableness: singlishScores.A,
                 singlish_conscientiousness: singlishScores.C,
                 singlish_neuroticism: singlishScores.N,
-                singlish_openMindedness: singlishScores.O
+                singlish_open_mindedness: singlishScores.O
             };
 
             if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
@@ -288,9 +308,17 @@ const baseQuestions = [
                 return;
             }
 
+            const params = new URLSearchParams();
+            Object.entries(exportData).forEach(([key, value]) => {
+                params.append(key, value);
+            });
+
             fetch(GOOGLE_APPS_SCRIPT_URL, {
                 method: 'POST',
-                body: JSON.stringify(exportData)
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                },
+                body: params.toString()
             })
             .then(response => response.json())
             .then(data => {
@@ -334,13 +362,14 @@ const baseQuestions = [
             `;
             container.appendChild(mascotSection);
 
-            // Traits section with unique colors - English version
-            const englishTraitsSection = document.createElement('div');
-            englishTraitsSection.className = 'traits-section';
-            englishTraitsSection.innerHTML = '<h2>English Version</h2>';
+            // Combined trait scores
+            const averageResults = getAverageResults(results);
+            const averageTraitsSection = document.createElement('div');
+            averageTraitsSection.className = 'traits-section';
+            averageTraitsSection.innerHTML = '<h2>Your Trait Scores</h2>';
 
-            Object.keys(results.english).forEach(key => {
-                const trait = results.english[key];
+            Object.keys(averageResults).forEach(key => {
+                const trait = averageResults[key];
                 const card = document.createElement('div');
                 card.className = 'trait-card';
                 card.innerHTML = `
@@ -358,37 +387,9 @@ const baseQuestions = [
                         ${getDescription(key, trait.percentage)}
                     </div>
                 `;
-                englishTraitsSection.appendChild(card);
+                averageTraitsSection.appendChild(card);
             });
-            container.appendChild(englishTraitsSection);
-
-            // Traits section - Singlish version
-            const singlishTraitsSection = document.createElement('div');
-            singlishTraitsSection.className = 'traits-section';
-            singlishTraitsSection.innerHTML = '<h2>Singlish Version</h2>';
-
-            Object.keys(results.singlish).forEach(key => {
-                const trait = results.singlish[key];
-                const card = document.createElement('div');
-                card.className = 'trait-card';
-                card.innerHTML = `
-                    <div class="trait-header">
-                        <div class="trait-name">
-                            <span class="emoji">${trait.emoji}</span>
-                            ${trait.name}
-                        </div>
-                        <div class="trait-score">${trait.percentage.toFixed(0)}%</div>
-                    </div>
-                    <div class="trait-bar">
-                        <div class="trait-bar-fill" style="width: ${trait.percentage}%"></div>
-                    </div>
-                    <div class="trait-description">
-                        ${getDescription(key, trait.percentage)}
-                    </div>
-                `;
-                singlishTraitsSection.appendChild(card);
-            });
-            container.appendChild(singlishTraitsSection);
+            container.appendChild(averageTraitsSection);
 
             // Healthcare Screening Results section (hidden from display but data collected)
             // const healthSection = document.createElement('div');
@@ -420,6 +421,28 @@ const baseQuestions = [
             allMascotsSection.appendChild(mascotsGrid);
             container.appendChild(allMascotsSection);
 
+            // Persist results so the separate results page can read them
+            try {
+                localStorage.setItem('bfi_lastResults', JSON.stringify({ results, dominantTrait }));
+            } catch (e) {
+                console.warn('Could not persist results to localStorage', e);
+            }
+
+            // Add a button to open the dedicated results page
+            const viewPageWrapper = document.createElement('div');
+            viewPageWrapper.className = 'view-results-page-wrapper';
+            viewPageWrapper.innerHTML = `
+                <a class="btn view-results-page-btn" href="results.html" target="_self">Open Results Page</a>
+                <a class="btn" href="index.html">Back to Start</a>
+            `;
+            container.appendChild(viewPageWrapper);
+
+            // Launch confetti celebration once
+            if (!confettiPlayed && typeof launchConfetti === 'function') {
+                launchConfetti(100);
+                confettiPlayed = true;
+            }
+
             // Animate bars
             setTimeout(() => {
                 document.querySelectorAll('.trait-bar-fill').forEach(bar => {
@@ -427,6 +450,87 @@ const baseQuestions = [
                 });
             }, 100);
         }
+
+// --- Lightweight confetti engine ---
+(function(){
+    const canvas = document.getElementById('confetti-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let W = 0, H = 0;
+    let particles = [];
+    const colors = ['#FF6B6B','#FF8E53','#00B4DB','#0083B0','#FFD89B','#FFC92A','#C061F0','#E75480','#11998E','#38EF7D'];
+
+    function resize() {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function rand(min, max){ return Math.random() * (max - min) + min; }
+
+    function createParticle(x, y) {
+        return {
+            x: x,
+            y: y,
+            vx: rand(-6,6),
+            vy: rand(-10,-2),
+            size: rand(6,12),
+            color: colors[Math.floor(Math.random()*colors.length)],
+            rot: rand(0,360),
+            drag: 0.01 + Math.random()*0.02,
+            gravity: 0.15 + Math.random()*0.12,
+            ttl: 80 + Math.floor(Math.random()*40)
+        };
+    }
+
+    let rafId = null;
+    function render() {
+        ctx.clearRect(0,0,W,H);
+        for (let i = particles.length-1; i >= 0; i--) {
+            const p = particles[i];
+            p.vx *= (1 - p.drag);
+            p.vy += p.gravity;
+            p.x += p.vx;
+            p.y += p.vy;
+            p.rot += p.vx * 0.5;
+            p.ttl--;
+
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot * Math.PI / 180);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size*0.6);
+            ctx.restore();
+
+            if (p.ttl <= 0 || p.y > H + 50) particles.splice(i,1);
+        }
+
+        if (particles.length) rafId = requestAnimationFrame(render);
+        else {
+            cancelAnimationFrame(rafId);
+            rafId = null;
+            ctx.clearRect(0,0,W,H);
+        }
+    }
+
+    // Expose a simple launcher
+    window.launchConfetti = function(duration){
+        const end = Date.now() + (duration || 3000);
+        const centreX = W/2;
+        const centreY = H*0.18;
+
+        function burst(){
+            // spawn multiple particles each frame while time remains
+            if (Date.now() < end) {
+                for (let i=0;i<12;i++) particles.push(createParticle(centreX + rand(-120,120), centreY + rand(-20,40)));
+                if (!rafId) render();
+                requestAnimationFrame(burst);
+            }
+        }
+        burst();
+    };
+})();
 
         function handleExport() {
             if (lastResults && lastDominantTrait) {

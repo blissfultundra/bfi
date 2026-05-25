@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Results - BFI</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { padding: 24px; }
+        .results-page { max-width: 900px; margin: 0 auto; }
+        /* consolidated layout */
+        .traits-grid { display:flex; gap:18px; flex-wrap:nowrap; align-items:end; overflow-x:auto; padding-bottom:8px; }
+        .results-page .trait-card { width:120px; text-align:center; flex:0 0 auto; background:none; border:none; padding:0; margin-bottom:0; box-shadow:none; }
+        .trait-label { margin-top:8px; font-weight:600; font-size:14px; }
+        .trait-perc { margin-bottom:8px; font-weight:700; }
+        .bar-vertical { width:56px; height:140px; background:transparent; border-radius:6px; margin:0 auto; display:flex; align-items:flex-end; overflow:hidden; }
+        .bar-fill { width:100%; background:#76c7c0; }
+        .view-fallback { margin-top: 18px; }
+        .btn { display: inline-block; padding: 8px 14px; background:#333; color:#fff; text-decoration:none; border-radius:6px; margin-right:8px; }
+    </style>
+</head>
+<body>
+    <main class="results-page">
+        <h1>Consolidated Results</h1>
+        <div id="resultsRoot">Loading results…</div>
+        <div class="view-fallback">
+            <a class="btn" href="index.html">Return to Quiz</a>
+        </div>
+    </main>
+
+    <script>
+        function getAverageResults(results) {
+            if (!results || !results.english || !results.singlish) return null;
+            const average = {};
+            Object.keys(results.english).forEach(key => {
+                const english = results.english[key];
+                const singlish = results.singlish[key];
+                const score = (english.score + singlish.score) / 2;
+                average[key] = {
+                    score,
+                    percentage: ((score - 1) / 4) * 100,
+                    name: english.name,
+                    emoji: english.emoji,
+                    color: english.color,
+                    colorLight: english.colorLight
+                };
+            });
+            return average;
+        }
+
+        function getDescription(trait, score) {
+            const descriptions = {
+                E: {
+                    high: "Wah you damn extroverted lah! Party animal type - confirm plus chop the life of every gathering. You love making new friends and sibeh vocal one. Probably your phone always got 99+ WhatsApp notifications.",
+                    low: "You more introverted lah, prefer small gatherings or stay home shiok shiok. Not that you don't like people, but too much socializing makes you sian. Your ideal Friday night is Netflix and chill at home, not Clarke Quay."
+                },
+                A: {
+                    high: "Super agreeable! You the type who always think of others first, very accommodating and kind-hearted. When your friends need help, you drop everything to help them. Sometimes must remember to take care of yourself also hor!",
+                    low: "You quite straight-forward and direct lah. Tell things as it is, don't really sugarcoat. Not that you're mean, but you value honesty over making everyone happy. Some people might find you blunt, but at least you genuine!"
+                },
+                C: {
+                    high: "Damn organized and responsible sia! Your life got structure, everything planned properly. You the type who color-code your calendar and actually stick to your to-do list. Boss sure like you one!",
+                    low: "You more spontaneous and flexible lah. Planning is not really your strong suit - you prefer to wing it and see how. Your room might be messy but somehow you function okay mah. YOLO mindset!"
+                },
+                N: {
+                    high: "You quite sensitive to stress leh. Small things also can make you worried or anxious. Must learn to relax more hor! Maybe go exercise or meditation - cannot always stress until cannot sleep.",
+                    low: "Sibeh steady pom pi pi! You very emotionally stable, not easily stressed or upset. Even when things go wrong, you can handle it calmly. This one good quality lah, but remember to still show emotions sometimes!"
+                },
+                O: {
+                    high: "Very open-minded and creative! You love new experiences, always exploring and trying different things. Confirm the type who will eat at new restaurant or travel to ulu places. Your Instagram probably very interesting!",
+                    low: "You prefer what's familiar and comfortable lah. Routine is good for you - same hawker stall, same coffee order, same route to work. Not boring, just you know what you like! Why change when current one okay already?"
+                }
+            };
+            return score >= 50 ? descriptions[trait].high : descriptions[trait].low;
+        }
+
+        (function(){
+            const root = document.getElementById('resultsRoot');
+
+            const mascots = {
+                E: { name: 'Party Lion', emoji: '🦁' },
+                A: { name: 'Chill Otter', emoji: '🦦' },
+                C: { name: 'Boss Bee', emoji: '🐝' },
+                N: { name: 'Kiasu Kitten', emoji: '🐱' },
+                O: { name: 'Curious Monkey', emoji: '🐵' }
+            };
+
+            function renderFromResultsObject(resultsObj) {
+                const avg = getAverageResults(resultsObj);
+                if (!avg) {
+                    root.innerHTML = '<p>No consolidated results available.</p>';
+                    return;
+                }
+
+                const container = document.createElement('div');
+                container.className = 'traits-grid';
+
+                Object.keys(avg).forEach(key => {
+                    const trait = avg[key];
+                    const card = document.createElement('div');
+                    card.className = 'trait-card';
+                    card.innerHTML = `
+                        <div class="trait-perc">${trait.percentage.toFixed(2)}%</div>
+                        <div class="bar-vertical" aria-hidden="true">
+                            <div class="bar-fill" style="height:${trait.percentage}%;background:${trait.color || '#76c7c0'}"></div>
+                        </div>
+                        <div class="trait-label">${trait.name}</div>
+                    `;
+                    container.appendChild(card);
+                });
+
+                root.innerHTML = '';
+                root.appendChild(container);
+            }
+
+            // Try API first (deployed Apps Script web app URL)
+            const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzvpJ_yFOS-Rl2vbQwSaQECLoRfXzupVukK80Dg59hxs2hVLR4x-VKra8cWWt3kMGkj/exec';
+
+            async function fetchConsolidated() {
+                if (!APPS_SCRIPT_URL) return false;
+                try {
+                    const res = await fetch(APPS_SCRIPT_URL, { cache: 'no-store' });
+                    if (!res.ok) throw new Error(res.statusText);
+                    const data = await res.json();
+                    // Expected shape: { english: {...}, singlish: {...}, dominantTrait?: 'E' }
+                    renderFromResultsObject(data);
+                    return true;
+                } catch (e) {
+                    console.warn('API fetch failed', e);
+                    return false;
+                }
+            }
+
+            // If API provided, poll; otherwise fallback to localStorage snapshot
+            (async function init() {
+                const apiAvailable = await fetchConsolidated();
+                if (apiAvailable) {
+                    setInterval(fetchConsolidated, 5000); // refresh every 5s
+                    return;
+                }
+
+                // fallback: read last local results saved by the quiz
+                let stored = null;
+                try { stored = JSON.parse(localStorage.getItem('bfi_lastResults')); } catch(e) { stored = null; }
+                if (!stored || !stored.results) {
+                    root.innerHTML = '<p>No results found. Please take the quiz first.</p>';
+                    return;
+                }
+                renderFromResultsObject(stored.results);
+            })();
+        })();
+    </script>
+</body>
+</html>

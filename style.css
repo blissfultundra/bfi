@@ -1,17 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+:root{
+    --primary-1: #667eea;
+    --primary-2: #764ba2;
+    --muted: #f4f6fb;
+    --glass: rgba(255,255,255,0.08);
+    --card-bg: rgba(255,255,255,0.75);
+}
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     min-height: 100vh;
-    padding: 20px;
+    margin: 0;
+    padding: 32px;
+    background: radial-gradient(1200px 600px at 10% 10%, rgba(255,255,255,0.04), transparent),
+                radial-gradient(900px 400px at 90% 90%, rgba(0,0,0,0.05), transparent),
+                linear-gradient(135deg, var(--primary-1) 0%, var(--primary-2) 100%);
+    color: #222;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
 }
 
 .container {
-    max-width: 800px;
+    max-width: 980px;
     margin: 0 auto;
-    background: white;
+    background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.82) 100%);
     border-radius: 20px;
-    padding: 40px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    padding: 34px;
+    box-shadow: 0 20px 50px rgba(28,30,42,0.18), inset 0 1px 0 rgba(255,255,255,0.6);
+    backdrop-filter: blur(6px) saturate(120%);
+    border: 1px solid rgba(255,255,255,0.4);
 }
 
 .header {
@@ -20,14 +38,15 @@ body {
 }
 
 .header h1 {
-    color: #667eea;
-    font-size: 2.5em;
-    margin-bottom: 10px;
+    color: #1f1f3a;
+    font-size: 2.6rem;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
 }
 
 .header .subtitle {
-    color: #666;
-    font-size: 1.1em;
+    color: #495066;
+    font-size: 1rem;
 }
 
 .progress-container {
@@ -36,17 +55,18 @@ body {
 
 .progress-bar {
     width: 100%;
-    height: 30px;
-    background: #f0f0f0;
-    border-radius: 15px;
+    height: 28px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.35), rgba(255,255,255,0.15));
+    border-radius: 999px;
     overflow: hidden;
     position: relative;
+    border: 1px solid rgba(31,31,58,0.06);
 }
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #667eea, #764ba2);
-    transition: width 0.3s ease;
+    background: repeating-linear-gradient( -45deg, rgba(255,255,255,0.06), rgba(255,255,255,0.06) 10px, rgba(0,0,0,0.03) 10px, rgba(0,0,0,0.03) 20px ), linear-gradient(90deg, var(--primary-1), var(--primary-2));
+    transition: width 0.5s cubic-bezier(.2,.9,.2,1);
 }
 
 .progress-percentage {
@@ -61,11 +81,13 @@ body {
 }
 
 .question-card {
-    background: #f8f9fa;
-    padding: 30px;
-    border-radius: 15px;
-    margin-bottom: 20px;
-    border-left: 5px solid #667eea;
+    background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,250,253,0.9));
+    padding: 28px;
+    border-radius: 14px;
+    margin-bottom: 22px;
+    border-left: 6px solid rgba(102,126,234,0.12);
+    box-shadow: 0 10px 30px rgba(31,31,58,0.06);
+    position: relative;
 }
 
 .question-number {
@@ -82,48 +104,66 @@ body {
 }
 
 .options {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 12px;
 }
 
 .option-btn {
-    padding: 15px 20px;
-    border: 2px solid #e0e0e0;
+    padding: 14px 18px;
+    border: 1px solid rgba(31,31,58,0.06);
     background: white;
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: all 0.2s;
-    font-size: 1em;
+    transition: all 0.22s cubic-bezier(.2,.9,.2,1);
+    font-size: 0.98rem;
     text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 6px 18px rgba(31,31,58,0.04);
+}
+
+.option-btn .dot {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: white;
+    flex: 0 0 36px;
 }
 
 .option-btn:hover {
-    border-color: #667eea;
-    background: #f0f4ff;
-    transform: translateX(5px);
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px rgba(31,31,58,0.08);
 }
 
 .option-btn.selected {
-    border-color: #667eea;
-    background: #667eea;
+    border-color: transparent;
+    background: linear-gradient(90deg, var(--primary-1), var(--primary-2));
     color: white;
 }
+
+.option-btn.selected .dot { box-shadow: 0 4px 8px rgba(0,0,0,0.12); }
 
 .nav-buttons {
     display: flex;
     justify-content: space-between;
-    margin-top: 30px;
+    margin-top: 28px;
+    gap: 12px;
 }
 
 .btn {
-    padding: 12px 30px;
+    padding: 12px 24px;
     border: none;
-    border-radius: 10px;
-    font-size: 1em;
+    border-radius: 12px;
+    font-size: 1rem;
     cursor: pointer;
-    transition: all 0.2s;
-    font-weight: bold;
+    transition: transform .18s ease, box-shadow .18s ease;
+    font-weight: 700;
 }
 
 .btn-prev {
@@ -132,13 +172,14 @@ body {
 }
 
 .btn-next {
-    background: #667eea;
+    background: linear-gradient(90deg, var(--primary-1), var(--primary-2));
     color: white;
+    box-shadow: 0 10px 28px rgba(102,126,234,0.18);
 }
 
 .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(31,31,58,0.12);
 }
 
 .btn:disabled {
@@ -156,10 +197,11 @@ body {
 }
 
 .trait-card {
-    background: #f8f9fa;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 15px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(250,250,253,0.95));
+    padding: 18px;
+    border-radius: 12px;
+    margin-bottom: 14px;
+    border: 1px solid rgba(31,31,58,0.04);
 }
 
 .trait-header {
@@ -202,7 +244,7 @@ body {
 }
 
 .emoji {
-    font-size: 1.5em;
+    font-size: 1.6em;
     margin-right: 10px;
 }
 
@@ -215,21 +257,21 @@ body {
 }
 
 .start-btn {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, var(--primary-1), var(--primary-2));
     color: white;
-    padding: 20px 50px;
-    font-size: 1.3em;
+    padding: 14px 34px;
+    font-size: 1.05rem;
     border: none;
-    border-radius: 15px;
+    border-radius: 12px;
     cursor: pointer;
-    margin-top: 30px;
-    font-weight: bold;
-    transition: all 0.3s;
+    margin-top: 20px;
+    font-weight: 700;
+    transition: transform .18s ease, box-shadow .18s ease;
 }
 
 .start-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 18px 46px rgba(102, 126, 234, 0.18);
 }
 
 .intro-content {
@@ -257,14 +299,20 @@ body {
 .bouncing-mascots {
     display: flex;
     justify-content: center;
-    gap: 20px;
-    margin-bottom: 5px;
-    height: 60px;
+    gap: 18px;
+    margin-bottom: 10px;
+    height: 72px;
 }
 
 .bouncing-emoji {
-    font-size: 2.5em;
-    animation: bounce 1.5s ease-in-out infinite;
+    font-size: 2.8em;
+    animation: floaty 3.2s ease-in-out infinite;
+}
+
+@keyframes floaty {
+    0% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-18px) rotate(2deg); }
+    100% { transform: translateY(0) rotate(-2deg); }
 }
 
 .bouncing-emoji:nth-child(1) {
@@ -289,12 +337,12 @@ body {
 
 /* Mascot main section */
 .mascot-main-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 15px;
-    padding: 40px;
+    border-radius: 14px;
+    padding: 28px;
     color: white;
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 36px;
+    box-shadow: 0 14px 40px rgba(31,31,58,0.08);
 }
 
 .mascot-main {
@@ -305,8 +353,8 @@ body {
 }
 
 .mascot-emoji-large {
-    font-size: 4em;
-    animation: bounce 1.5s ease-in-out infinite;
+    font-size: 4.2em;
+    animation: floaty 2.4s ease-in-out infinite;
 }
 
 .mascot-name-large {
@@ -602,4 +650,16 @@ body {
     .mascots-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* Confetti canvas */
+#confetti-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 9999;
+    display: block;
 }
