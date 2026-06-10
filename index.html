@@ -70,6 +70,32 @@
         </div>
     </div>
 
+    <!-- Consent Dialog Modal -->
+    <div class="consent-modal" id="consentModal">
+        <div class="consent-dialog">
+            <div class="consent-header">
+                <h2>🔒 Research Consent</h2>
+            </div>
+            <div class="consent-content">
+                <p>Before we begin, we need your permission to proceed with this study.</p>
+                <div class="consent-statement">
+                    <h3>Data Collection & Privacy</h3>
+                    <p>By clicking "I agree", you consent to:</p>
+                    <ul>
+                        <li>Your responses being collected for this research study</li>
+                        <li>Your data being stored securely and used for research purposes only</li>
+                        <li>Your anonymity being maintained throughout the study</li>
+                        <li>You may withdraw from the study at any time</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="consent-buttons">
+                <button class="btn-decline" onclick="declineConsent()">Go back</button>
+                <button class="btn-agree" onclick="acceptConsent()">I agree</button>
+            </div>
+        </div>
+    </div>
+
     <canvas id="confetti-canvas" aria-hidden="true"></canvas>
     <script src="script.js"></script>
 </body>

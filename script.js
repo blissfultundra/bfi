@@ -1,28 +1,28 @@
 const baseQuestions = [
             // Extraversion (E)
-            { text: "I am someone who tends to be quiet.", singlish: "I quite quiet person one.", trait: "E", reverse: true },
-            { text: "I am someone who is dominant, acts as a leader.", singlish: "I quite dominant, like to lead one.", trait: "E", reverse: false },
-            { text: "I am someone who is full of energy.", singlish: "I full of energy, very energetic lah.", trait: "E", reverse: false },
+            { text: "I am someone who tends to be quiet.", singlish: "I very quiet one, don't really talk much.", trait: "E", reverse: true },
+            { text: "I am someone who is dominant, acts as a leader.", singlish: "I naturally take charge one, will become leader without planning.", trait: "E", reverse: false },
+            { text: "I am someone who is full of energy.", singlish: "I quite high energy, cannot sit still leh.", trait: "E", reverse: false },
 
             // Agreeableness (A)
-            { text: "I am someone who is compassionate, has a soft heart.", singlish: "I very compassionate, got soft heart lor.", trait: "A", reverse: false },
-            { text: "I am someone who is sometimes rude to others.", singlish: "I sometimes rude to people lah.", trait: "A", reverse: true },
-            { text: "I am someone who assumes the best about people.", singlish: "I assume the best about people, very trusting one.", trait: "A", reverse: false },
+            { text: "I am someone who is compassionate, has a soft heart.", singlish: "I very soft-hearted lah, always feel for people easily.", trait: "A", reverse: false },
+            { text: "I am someone who is sometimes rude to others.", singlish: "Sometimes I can be quite rude lah, but aiyah, I don't mean it one.", trait: "A", reverse: true },
+            { text: "I am someone who assumes the best about people.", singlish: "I always assume people got good intentions one.", trait: "A", reverse: false },
 
             // Conscientiousness (C)
-            { text: "I am someone who tends to be disorganised.", singlish: "I tend to be quite messy and disorganised one.", trait: "C", reverse: true },
-            { text: "I am someone who has difficulty getting started on tasks.", singlish: "I got difficulty getting started on tasks, very procrastinator.", trait: "C", reverse: true },
-            { text: "I am someone who is reliable, can always be counted on.", singlish: "I reliable, can always count on me lor.", trait: "C", reverse: false },
+            { text: "I am someone who tends to be disorganised.", singlish: "I quite messy; I anyhow organise things.", trait: "C", reverse: true },
+            { text: "I am someone who has difficulty getting started on tasks.", singlish: "I got difficulty starting tasks, always drag first one.", trait: "C", reverse: true },
+            { text: "I am someone who is reliable, can always be counted on.", singlish: "I quite reliable lah, people can depend on me one.", trait: "C", reverse: false },
 
             // Emotionality/Neuroticism (N)
-            { text: "I am someone who worries a lot.", singlish: "I worry lots, very kiasu lah.", trait: "N", reverse: false },
-            { text: "I am someone who tends to feel depressed, blue.", singlish: "I tend to feel depressed or blue lor.", trait: "N", reverse: false },
-            { text: "I am someone who is emotionally stable, not easily upset.", singlish: "I emotionally stable, not easily upset one.", trait: "N", reverse: true },
+            { text: "I am someone who worries a lot.", singlish: "I worry a lot sia, small small things also got stress.", trait: "N", reverse: false },
+            { text: "I am someone who tends to feel depressed, blue.", singlish: "I sometimes feel quite down or emo lah.", trait: "N", reverse: false },
+            { text: "I am someone who is emotionally stable, not easily upset.", singlish: "I quite steady lah, I not so easily upset one.", trait: "N", reverse: true },
 
             // Open-Mindedness (O)
-            { text: "I am someone who is fascinated by art, music, or literature.", singlish: "I fascinated by art, music, or literature lor.", trait: "O", reverse: false },
-            { text: "I am someone who has little interest in abstract ideas.", singlish: "I got no interest in abstract ideas one.", trait: "O", reverse: true },
-            { text: "I am someone who is original, comes up with new ideas.", singlish: "I original, always got new ideas lah.", trait: "O", reverse: false }
+            { text: "I am someone who is fascinated by art, music, or literature.", singlish: "I quite into art, music and literature kind of stuff.", trait: "O", reverse: false },
+            { text: "I am someone who has little interest in abstract ideas.", singlish: "I not really into abstract or cheem ideas one.", trait: "O", reverse: true },
+            { text: "I am someone who is original, comes up with new ideas.", singlish: "I quite creative one, always got new ideas.", trait: "O", reverse: false }
         ];
 
         function getShuffledQuestions() {
@@ -97,6 +97,24 @@ const baseQuestions = [
         let confettiPlayed = false;
 
         function startQuiz() {
+            // Show the consent modal when the user clicks "Let's Go!"
+            document.getElementById('consentModal').classList.add('active');
+        }
+
+        function acceptConsent() {
+            // Hide the consent modal and proceed with the quiz
+            document.getElementById('consentModal').classList.remove('active');
+            proceedWithQuiz();
+        }
+
+        function declineConsent() {
+            // Close the modal and return to intro screen
+            document.getElementById('consentModal').classList.remove('active');
+            alert('You must consent to continue with the study. If you change your mind, click "Let\'s Go!" again.');
+        }
+
+        function proceedWithQuiz() {
+            // Initialize the quiz
             questions = getShuffledQuestions();
             answers = new Array(30).fill(null);
             currentQuestion = 0;
