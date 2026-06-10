@@ -270,6 +270,8 @@ const baseQuestions = [
                 scores[key] = parseFloat(results[key].score.toFixed(2));
             });
 
+            console.log('Posting to Google Sheets - Trait Scores:', scores);
+
             const exportData = {
                 timestamp: new Date().toLocaleString(),
                 dominant_trait: dominantTrait,
