@@ -6,27 +6,30 @@
     <title>Results - BFI</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        body { padding: 24px; }
+        body { padding: 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
         .results-page { max-width: 1200px; margin: 0 auto; }
+        .results-page h1 { color: #fff; font-size: 32px; margin-bottom: 32px; font-weight: 700; }
         /* consolidated layout */
-        .traits-grid { display:flex; gap:18px; flex-wrap:nowrap; align-items:end; overflow-x:auto; padding-bottom:8px; }
+        .traits-grid { display:flex; gap:24px; flex-wrap:nowrap; align-items:flex-end; overflow-x:auto; padding-bottom:8px; }
         .results-page .trait-card { width:120px; text-align:center; flex:0 0 auto; background:none; border:none; padding:0; margin-bottom:0; box-shadow:none; }
-        .trait-label { margin-top:8px; font-weight:600; font-size:14px; }
-        .trait-perc { margin-bottom:8px; font-weight:700; }
+        .trait-label { margin-top:12px; font-weight:600; font-size:12px; color: #333; }
+        .trait-perc { margin-bottom:12px; font-weight:700; font-size: 24px; color: #667eea; }
         /* Average Scores Section */
         .responses-section {
             margin-top: 32px;
             padding: 24px;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            background: white;
             border-radius: 12px;
-            border: 1px solid rgba(102, 126, 234, 0.15);
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
         
         .responses-section h2 {
-            color: #667eea;
+            color: #333;
             margin-top: 0;
-            margin-bottom: 20px;
-            font-size: 18px;
+            margin-bottom: 24px;
+            font-size: 20px;
+            font-weight: 600;
         }
         
         .responses-empty {
@@ -41,8 +44,8 @@
             color: #667eea;
             font-weight: 600;
         }
-        .bar-vertical { width:56px; height:140px; background:transparent; border-radius:6px; margin:0 auto; display:flex; align-items:flex-end; overflow:hidden; }
-        .bar-fill { width:100%; background:#76c7c0; }
+        .bar-vertical { width:56px; height:200px; background: #e8e8e8; border-radius: 8px; margin:0 auto; display:flex; align-items:flex-end; overflow:hidden; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+        .bar-fill { width:100%; background:#76c7c0; border-radius: 6px; transition: height 0.3s ease; }
         .view-fallback { margin-top: 18px; }
         .btn { display: inline-block; padding: 8px 14px; background:#333; color:#fff; text-decoration:none; border-radius:6px; margin-right:8px; margin-top: 8px; }
     </style>
@@ -91,28 +94,22 @@
                 };
 
                 responses.forEach(row => {
-                    // Handle both old field names (extraversion) and new ones with (score) suffix
-                    const eVal = row['extraversion (score)'] || row.extraversion;
-                    const aVal = row['agreeableness (score)'] || row.agreeableness;
-                    const cVal = row['conscientiousness (score)'] || row.conscientiousness;
-                    const nVal = row['neuroticism (score)'] || row.neuroticism;
-                    const oVal = row['open_mindedness (score)'] || row.open_mindedness;
-                    
-                    console.log('Parsing row:', { eVal, aVal, cVal, nVal, oVal });
-                    
-                    totals.E += parseFloat(eVal) || 0;
-                    totals.A += parseFloat(aVal) || 0;
-                    totals.C += parseFloat(cVal) || 0;
-                    totals.N += parseFloat(nVal) || 0;
-                    totals.O += parseFloat(oVal) || 0;
+                    totals.E += parseFloat(row.extraversion) || 0;
+                    totals.A += parseFloat(row.agreeableness) || 0;
+                    totals.C += parseFloat(row.conscientiousness) || 0;
+                    totals.N += parseFloat(row.neuroticism) || 0;
+                    totals.O += parseFloat(row.open_mindedness) || 0;
                 });
 
                 const averages = {};
                 Object.keys(totals).forEach(key => {
-                    const avg = totals[key] / responses.length;
-                    const percentage = ((avg - 1) / 4) * 100;
+                    const total = totals[key];
+                    // Scale for 1-15 range per response, so max is 15 * number of responses
+                    const maxPossible = 15 * responses.length;
+                    const percentage = (total / maxPossible) * 100;
                     averages[key] = {
-                        score: avg.toFixed(2),
+                        score: total.toFixed(2),
+                        displayScore: total.toFixed(2),
                         percentage: Math.max(0, Math.min(100, percentage)),
                         name: traits[key].name,
                         emoji: traits[key].emoji,
@@ -134,11 +131,12 @@
                 let html = '<div class="traits-grid">';
                 Object.keys(averages).forEach(key => {
                     const trait = averages[key];
+                    const barHeight = (trait.percentage < 0) ? 0 : Math.min(100, trait.percentage);
                     html += `
                         <div class="trait-card">
-                            <div class="trait-perc">${trait.percentage.toFixed(1)}%</div>
+                            <div class="trait-perc">${trait.displayScore}</div>
                             <div class="bar-vertical" aria-hidden="true">
-                                <div class="bar-fill" style="height:${trait.percentage}%;background:${trait.color}"></div>
+                                <div class="bar-fill" style="height:${barHeight}%;background:${trait.color}"></div>
                             </div>
                             <div class="trait-label">${trait.emoji}<br>${trait.name}</div>
                         </div>
