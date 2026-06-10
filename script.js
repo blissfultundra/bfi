@@ -1,36 +1,32 @@
 const baseQuestions = [
             // Extraversion (E)
-            { text: "I am someone who tends to be quiet.", singlish: "I very quiet one, don't really talk much.", trait: "E", reverse: true },
-            { text: "I am someone who is dominant, acts as a leader.", singlish: "I naturally take charge one, will become leader without planning.", trait: "E", reverse: false },
-            { text: "I am someone who is full of energy.", singlish: "I quite high energy, cannot sit still leh.", trait: "E", reverse: false },
+            { text: "I very quiet one, don't really talk much.", trait: "E", reverse: true },
+            { text: "I naturally take charge one, will become leader without planning.", trait: "E", reverse: false },
+            { text: "I quite high energy, cannot sit still leh.", trait: "E", reverse: false },
 
             // Agreeableness (A)
-            { text: "I am someone who is compassionate, has a soft heart.", singlish: "I very soft-hearted lah, always feel for people easily.", trait: "A", reverse: false },
-            { text: "I am someone who is sometimes rude to others.", singlish: "Sometimes I can be quite rude lah, but aiyah, I don't mean it one.", trait: "A", reverse: true },
-            { text: "I am someone who assumes the best about people.", singlish: "I always assume people got good intentions one.", trait: "A", reverse: false },
+            { text: "I very soft-hearted lah, always feel for people easily.", trait: "A", reverse: false },
+            { text: "Sometimes I can be quite rude lah, but aiyah, I don't mean it one.", trait: "A", reverse: true },
+            { text: "I always assume people got good intentions one.", trait: "A", reverse: false },
 
             // Conscientiousness (C)
-            { text: "I am someone who tends to be disorganised.", singlish: "I quite messy; I anyhow organise things.", trait: "C", reverse: true },
-            { text: "I am someone who has difficulty getting started on tasks.", singlish: "I got difficulty starting tasks, always drag first one.", trait: "C", reverse: true },
-            { text: "I am someone who is reliable, can always be counted on.", singlish: "I quite reliable lah, people can depend on me one.", trait: "C", reverse: false },
+            { text: "I quite messy; I anyhow organise things.", trait: "C", reverse: true },
+            { text: "I got difficulty starting tasks, always drag first one.", trait: "C", reverse: true },
+            { text: "I quite reliable lah, people can depend on me one.", trait: "C", reverse: false },
 
             // Emotionality/Neuroticism (N)
-            { text: "I am someone who worries a lot.", singlish: "I worry a lot sia, small small things also got stress.", trait: "N", reverse: false },
-            { text: "I am someone who tends to feel depressed, blue.", singlish: "I sometimes feel quite down or emo lah.", trait: "N", reverse: false },
-            { text: "I am someone who is emotionally stable, not easily upset.", singlish: "I quite steady lah, I not so easily upset one.", trait: "N", reverse: true },
+            { text: "I worry a lot sia, small small things also got stress.", trait: "N", reverse: false },
+            { text: "I sometimes feel quite down or emo lah.", trait: "N", reverse: false },
+            { text: "I quite steady lah, I not so easily upset one.", trait: "N", reverse: true },
 
             // Open-Mindedness (O)
-            { text: "I am someone who is fascinated by art, music, or literature.", singlish: "I quite into art, music and literature kind of stuff.", trait: "O", reverse: false },
-            { text: "I am someone who has little interest in abstract ideas.", singlish: "I not really into abstract or cheem ideas one.", trait: "O", reverse: true },
-            { text: "I am someone who is original, comes up with new ideas.", singlish: "I quite creative one, always got new ideas.", trait: "O", reverse: false }
+            { text: "I quite into art, music and literature kind of stuff.", trait: "O", reverse: false },
+            { text: "I not really into abstract or cheem ideas one.", trait: "O", reverse: true },
+            { text: "I quite creative one, always got new ideas.", trait: "O", reverse: false }
         ];
 
         function getShuffledQuestions() {
-            const allQuestions = [];
-            baseQuestions.forEach(q => {
-                allQuestions.push({ text: q.text, trait: q.trait, reverse: q.reverse, version: 'english' });
-                allQuestions.push({ text: q.singlish, trait: q.trait, reverse: q.reverse, version: 'singlish' });
-            });
+            const allQuestions = [...baseQuestions];
 
             // Fisher-Yates shuffle
             for (let i = allQuestions.length - 1; i > 0; i--) {
@@ -89,9 +85,9 @@ const baseQuestions = [
             }
         };
 
-        const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzm_qp7MI7xESadsmg2yi8XEMh4sKtjUlbtPGyPN12bBboMk2oE0F8IWYQV0uU6lm8/exec"; // User will set this
+        const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyYN_-sXj8Po9RR-E1kKTJcHVYqXwRBzghs4GQvEJkWA2U-RtiNqXSb76avm3datEdQ/exec";
         let currentQuestion = 0;
-        let answers = new Array(30).fill(null);
+        let answers = new Array(15).fill(null);
         let lastResults = null;
         let lastDominantTrait = null;
         let confettiPlayed = false;
@@ -125,7 +121,7 @@ const baseQuestions = [
 
         function displayQuestion() {
             const q = questions[currentQuestion];
-            document.getElementById('questionNumber').textContent = `Question ${currentQuestion + 1} of 30`;
+            document.getElementById('questionNumber').textContent = `Question ${currentQuestion + 1} of 15`;
             document.getElementById('questionText').textContent = q.text;
 
             const optionsContainer = document.getElementById('optionsContainer');
@@ -152,7 +148,7 @@ const baseQuestions = [
         }
 
         function updateProgress() {
-            const progress = ((currentQuestion + 1) / 30) * 100;
+            const progress = ((currentQuestion + 1) / 15) * 100;
             document.getElementById('progressBar').style.width = progress + '%';
             document.getElementById('progressPercentage').textContent = Math.round(progress) + '%';
         }
@@ -161,7 +157,7 @@ const baseQuestions = [
             document.getElementById('prevBtn').disabled = currentQuestion === 0;
             const nextBtn = document.getElementById('nextBtn');
 
-            if (currentQuestion === 29) {
+            if (currentQuestion === 14) {
                 nextBtn.textContent = 'See Results! 🎉';
                 nextBtn.disabled = answers[currentQuestion] === null;
             } else {
@@ -173,7 +169,7 @@ const baseQuestions = [
         function nextQuestion() {
             if (answers[currentQuestion] === null) return;
 
-            if (currentQuestion < 29) {
+            if (currentQuestion < 14) {
                 currentQuestion++;
                 displayQuestion();
             } else {
@@ -197,61 +193,32 @@ const baseQuestions = [
                 O: { scores: [], name: 'Open-Mindedness', emoji: '🌟' }
             };
 
-            const englishTraits = JSON.parse(JSON.stringify(traits));
-            const singlishTraits = JSON.parse(JSON.stringify(traits));
-
             questions.forEach((q, index) => {
                 let score = answers[index];
                 if (q.reverse) {
                     score = 6 - score;
                 }
-
-                if (q.version === 'english') {
-                    englishTraits[q.trait].scores.push(score);
-                } else {
-                    singlishTraits[q.trait].scores.push(score);
-                }
+                traits[q.trait].scores.push(score);
             });
 
-            const calculateResults = (traitsObj) => {
-                const results = {};
-                Object.keys(traitsObj).forEach(key => {
-                    const scores = traitsObj[key].scores;
-                    const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-                    results[key] = {
-                        score: avg,
-                        percentage: ((avg - 1) / 4) * 100,
-                        name: traitsObj[key].name,
-                        emoji: traitsObj[key].emoji,
-                        color: mascots[key].color,
-                        colorLight: mascots[key].colorLight
-                    };
-                });
-                return results;
-            };
-
-            return {
-                english: calculateResults(englishTraits),
-                singlish: calculateResults(singlishTraits)
-            };
+            const results = {};
+            Object.keys(traits).forEach(key => {
+                const scores = traits[key].scores;
+                const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+                results[key] = {
+                    score: avg,
+                    percentage: ((avg - 1) / 4) * 100,
+                    name: traits[key].name,
+                    emoji: traits[key].emoji,
+                    color: mascots[key].color,
+                    colorLight: mascots[key].colorLight
+                };
+            });
+            return results;
         }
 
         function getAverageResults(results) {
-            const average = {};
-            Object.keys(results.english).forEach(key => {
-                const english = results.english[key];
-                const singlish = results.singlish[key];
-                const score = (english.score + singlish.score) / 2;
-                average[key] = {
-                    score,
-                    percentage: ((score - 1) / 4) * 100,
-                    name: english.name,
-                    emoji: english.emoji,
-                    color: english.color,
-                    colorLight: english.colorLight
-                };
-            });
-            return average;
+            return results;
         }
 
         function getDescription(trait, score) {
@@ -297,28 +264,20 @@ const baseQuestions = [
         }
 
         function postResultsToSheet(results, dominantTrait) {
-            const englishScores = {};
-            const singlishScores = {};
+            const scores = {};
 
-            Object.keys(results.english).forEach(key => {
-                englishScores[key] = parseFloat(results.english[key].score.toFixed(2));
-                singlishScores[key] = parseFloat(results.singlish[key].score.toFixed(2));
+            Object.keys(results).forEach(key => {
+                scores[key] = parseFloat(results[key].score.toFixed(2));
             });
 
             const exportData = {
                 timestamp: new Date().toLocaleString(),
                 dominant_trait: dominantTrait,
-                mascot: mascots[dominantTrait].name,
-                english_extraversion: englishScores.E,
-                english_agreeableness: englishScores.A,
-                english_conscientiousness: englishScores.C,
-                english_neuroticism: englishScores.N,
-                english_open_mindedness: englishScores.O,
-                singlish_extraversion: singlishScores.E,
-                singlish_agreeableness: singlishScores.A,
-                singlish_conscientiousness: singlishScores.C,
-                singlish_neuroticism: singlishScores.N,
-                singlish_open_mindedness: singlishScores.O
+                extraversion: scores.E,
+                agreeableness: scores.A,
+                conscientiousness: scores.C,
+                neuroticism: scores.N,
+                open_mindedness: scores.O
             };
 
             if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
