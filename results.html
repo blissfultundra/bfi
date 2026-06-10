@@ -103,13 +103,12 @@
 
                 const averages = {};
                 Object.keys(totals).forEach(key => {
-                    const total = totals[key];
-                    // Scale for 1-15 range per response, so max is 15 * number of responses
-                    const maxPossible = 15 * responses.length;
-                    const percentage = (total / maxPossible) * 100;
+                    const avg = totals[key] / responses.length;
+                    // Scale for 1-15 range: ((score - 1) / 14) * 100
+                    const percentage = ((avg - 1) / 14) * 100;
                     averages[key] = {
-                        score: total.toFixed(2),
-                        displayScore: total.toFixed(2),
+                        score: avg.toFixed(2),
+                        displayScore: avg.toFixed(2),
                         percentage: Math.max(0, Math.min(100, percentage)),
                         name: traits[key].name,
                         emoji: traits[key].emoji,

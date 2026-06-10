@@ -204,10 +204,10 @@ const baseQuestions = [
             const results = {};
             Object.keys(traits).forEach(key => {
                 const scores = traits[key].scores;
-                const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+                const total = scores.reduce((a, b) => a + b, 0);
                 results[key] = {
-                    score: avg,
-                    percentage: ((avg - 1) / 4) * 100,
+                    score: total,
+                    percentage: ((total - 3) / 12) * 100,
                     name: traits[key].name,
                     emoji: traits[key].emoji,
                     color: mascots[key].color,
