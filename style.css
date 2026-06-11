@@ -291,11 +291,17 @@ body {
 }
 
 .intro-screen, .quiz-screen, .theme-screen {
-    display: none;
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    overflow: hidden !important;
 }
 
 .intro-screen.active, .quiz-screen.active, .theme-screen.active {
-    display: block;
+    display: block !important;
+    visibility: visible !important;
+    height: auto !important;
+    overflow: visible !important;
 }
 
 .start-btn {
