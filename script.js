@@ -85,12 +85,67 @@ const baseQuestions = [
             }
         };
 
-        const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyYN_-sXj8Po9RR-E1kKTJcHVYqXwRBzghs4GQvEJkWA2U-RtiNqXSb76avm3datEdQ/exec";
+        const themes = {
+            disney_princesses: {
+                name: 'Disney Princesses',
+                characters: {
+                    O: { name: 'Belle', description: 'You\'re like Belle - creative, curious, and love learning new things. You see the world through a unique lens and aren\'t afraid to be different!' },
+                    C: { name: 'Mulan', description: 'You\'re like Mulan - disciplined, responsible, and determined. You tackle challenges head-on and always see things through to the end.' },
+                    E: { name: 'Cinderella', description: 'You\'re like Cinderella - outgoing, charismatic, and the life of the party. People are drawn to your energy and enthusiasm!' },
+                    A: { name: 'Snow White', description: 'You\'re like Snow White - kind-hearted, caring, and compassionate. You bring warmth and harmony to everyone around you.' },
+                    N: { name: 'Ariel', description: 'You\'re like Ariel - sensitive, introspective, and deeply emotional. You feel things intensely and care deeply about others.' }
+                }
+            },
+            animals: {
+                name: 'Animals',
+                characters: {
+                    O: { name: 'Monkey', description: 'You\'re like a Monkey - curious, creative, and always exploring new possibilities. You love trying new things and thinking outside the box!' },
+                    C: { name: 'Bee', description: 'You\'re like a Bee - organized, hardworking, and reliable. You\'re focused on getting things done efficiently and helping others.' },
+                    E: { name: 'Lion', description: 'You\'re like a Lion - bold, confident, and commanding. You inspire others with your charisma and natural leadership!' },
+                    A: { name: 'Otter', description: 'You\'re like an Otter - friendly, social, and warm-hearted. You bring joy and harmony to your relationships with others.' },
+                    N: { name: 'Cat', description: 'You\'re like a Cat - sensitive, thoughtful, and perceptive. You pick up on subtle things and care deeply about your environment.' }
+                }
+            },
+            nucleotide_bases: {
+                name: 'Nucleotide Bases',
+                characters: {
+                    O: { name: 'Adenine', description: 'You\'re like Adenine - paired with creativity and imagination. You bring variety and novelty to everything you do!' },
+                    C: { name: 'Guanine', description: 'You\'re like Guanine - paired with structure and organization. You provide stability and ensure things are done right.' },
+                    E: { name: 'Cytosine', description: 'You\'re like Cytosine - energetic and dynamic. You connect with others and create excitement wherever you go!' },
+                    A: { name: 'Thymine', description: 'You\'re like Thymine - grounded and harmonious. You create balance and bring people together through your kindness.' },
+                    N: { name: 'Uracil', description: 'You\'re like Uracil - sensitive and aware. You notice nuances others miss and have a deep inner life.' }
+                }
+            },
+            singapore_dishes: {
+                name: 'Singaporean Dishes',
+                characters: {
+                    O: { name: 'Roti Prata', description: 'You\'re like Roti Prata - versatile, creative, and full of possibilities! You constantly adapt and reinvent yourself.' },
+                    C: { name: 'Chicken Rice', description: 'You\'re like Chicken Rice - reliable, classic, and always dependable. You\'re the person people can count on every time.' },
+                    E: { name: 'Nasi Lemak', description: 'You\'re like Nasi Lemak - bold, flavorful, and impossible to ignore! You bring excitement and energy to every situation.' },
+                    A: { name: 'Ice Kacang', description: 'You\'re like Ice Kacang - sweet, refreshing, and bring comfort to others. You make people feel good just by being around!' },
+                    N: { name: 'Chili Crab', description: 'You\'re like Chili Crab - complex, intense, and deeply feeling. You experience emotions on a deeper level than most.' }
+                }
+            },
+            vehicles: {
+                name: 'Vehicles',
+                characters: {
+                    O: { name: 'Airplane', description: 'You\'re like an Airplane - always exploring new horizons and thinking big. You love experiencing new places and ideas!' },
+                    C: { name: 'Truck', description: 'You\'re like a Truck - solid, dependable, and hardworking. You get the job done no matter what it takes.' },
+                    E: { name: 'Motorbike', description: 'You\'re like a Motorbike - thrilling, adventurous, and full of energy! You bring excitement and speed to everything you do.' },
+                    A: { name: 'Car', description: 'You\'re like a Car - practical, reliable, and comfortable. People feel safe and happy being around you.' },
+                    N: { name: 'Train', description: 'You\'re like a Train - thoughtful about your path and aware of your surroundings. You move steadily through life with intention.' }
+                }
+            }
+        };
+
+        const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyOPj99L9Q-3m8IwQRcC6O9nEq4aovOPM-WNibrom61k9jWjIg2VrSJqTnGRBcpjgQ9/exec";
         let currentQuestion = 0;
         let answers = new Array(15).fill(null);
         let lastResults = null;
         let lastDominantTrait = null;
         let confettiPlayed = false;
+        let selectedTheme = null;
+        let quizHistoryResponse = null;
 
         function startQuiz() {
             // Show the consent modal when the user clicks "Let's Go!"
@@ -98,9 +153,44 @@ const baseQuestions = [
         }
 
         function acceptConsent() {
-            // Hide the consent modal and proceed with the quiz
+            // Hide the consent modal and show the theme selection screen
             document.getElementById('consentModal').classList.remove('active');
+            showThemeSelection();
+        }
+
+        function showThemeSelection() {
+            // Show the theme selection screen
+            document.querySelector('.intro-screen').classList.remove('active');
+            document.querySelector('.theme-screen').classList.add('active');
+        }
+
+        function selectTheme(theme) {
+            // Store the selected theme and proceed with the quiz
+            selectedTheme = theme;
+            console.log('Selected theme:', theme);
+            
+            // Also store in localStorage for access on results page
+            try {
+                localStorage.setItem('bfi_selectedTheme', theme);
+            } catch (e) {
+                console.warn('Could not persist theme to localStorage', e);
+            }
+            
+            document.querySelector('.theme-screen').classList.remove('active');
             proceedWithQuiz();
+        }
+
+        function setQuizHistory(response) {
+            // Store the quiz history response
+            quizHistoryResponse = response;
+            console.log('Quiz history response:', response);
+            
+            // Also store in localStorage
+            try {
+                localStorage.setItem('bfi_quizHistory', response);
+            } catch (e) {
+                console.warn('Could not persist quiz history to localStorage', e);
+            }
         }
 
         function declineConsent() {
@@ -279,7 +369,8 @@ const baseQuestions = [
                 agreeableness: scores.A,
                 conscientiousness: scores.C,
                 neuroticism: scores.N,
-                open_mindedness: scores.O
+                open_mindedness: scores.O,
+                quiz_history: quizHistoryResponse || 'not specified'
             };
 
             if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
@@ -328,17 +419,32 @@ const baseQuestions = [
             const container = document.getElementById('resultsContainer');
             container.innerHTML = '';
 
-            // Main mascot section
+            // Check if a theme was selected
+            const themedCharacter = selectedTheme && themes[selectedTheme] ? themes[selectedTheme].characters[dominantTrait] : null;
+
+            // Main mascot/character section
             const mascotSection = document.createElement('div');
             mascotSection.className = `mascot-main-section highlighted highlighted-${dominantTrait}`;
             mascotSection.style.background = `linear-gradient(135deg, ${mascots[dominantTrait].color} 0%, ${mascots[dominantTrait].colorLight} 100%)`;
-            mascotSection.innerHTML = `
-                <div class="mascot-main">
-                    <div class="mascot-emoji-large">${mascot.emoji}</div>
-                    <div class="mascot-name-large">${mascot.name}</div>
-                    <div class="mascot-description-large">${mascot.description}</div>
-                </div>
-            `;
+            
+            if (themedCharacter) {
+                // Display themed character
+                mascotSection.innerHTML = `
+                    <div class="mascot-main">
+                        <div class="mascot-name-large">${themedCharacter.name}</div>
+                        <div class="mascot-description-large">${themedCharacter.description}</div>
+                    </div>
+                `;
+            } else {
+                // Display default mascot
+                mascotSection.innerHTML = `
+                    <div class="mascot-main">
+                        <div class="mascot-emoji-large">${mascot.emoji}</div>
+                        <div class="mascot-name-large">${mascot.name}</div>
+                        <div class="mascot-description-large">${mascot.description}</div>
+                    </div>
+                `;
+            }
             container.appendChild(mascotSection);
 
             // Combined trait scores
@@ -375,7 +481,7 @@ const baseQuestions = [
             // healthSection.className = 'health-section';
             // Removed from results display
 
-            // All mascots section
+            // All mascots/characters section
             const allMascotsSection = document.createElement('div');
             allMascotsSection.className = 'all-mascots-section';
             allMascotsSection.innerHTML = '<h2>All your friends leh!</h2>';
@@ -383,26 +489,45 @@ const baseQuestions = [
             const mascotsGrid = document.createElement('div');
             mascotsGrid.className = 'mascots-grid';
 
-            Object.keys(mascots).forEach(key => {
-                const m = mascots[key];
-                const isUserMascot = key === dominantTrait;
-                const mascotCard = document.createElement('div');
-                mascotCard.className = `mascot-card ${isUserMascot ? `highlighted highlighted-${key}` : ''}`;
-                mascotCard.innerHTML = `
-                    <div class="mascot-emoji">${m.emoji}</div>
-                    <div class="mascot-name">${m.name}</div>
-                    <div class="mascot-description">${m.description}</div>
-                    ${isUserMascot ? '<div class="user-mascot-badge">IT\'S YOU!</div>' : ''}
-                `;
-                mascotsGrid.appendChild(mascotCard);
-            });
+            // Check if a theme was selected
+            if (themedCharacter && selectedTheme && themes[selectedTheme]) {
+                // Display theme-specific characters
+                const themeData = themes[selectedTheme];
+                Object.keys(themeData.characters).forEach(key => {
+                    const char = themeData.characters[key];
+                    const isUserCharacter = key === dominantTrait;
+                    const charCard = document.createElement('div');
+                    charCard.className = `mascot-card ${isUserCharacter ? `highlighted highlighted-${key}` : ''}`;
+                    charCard.innerHTML = `
+                        <div class="mascot-name">${char.name}</div>
+                        <div class="mascot-description">${char.description}</div>
+                        ${isUserCharacter ? '<div class="user-mascot-badge">IT\'S YOU!</div>' : ''}
+                    `;
+                    mascotsGrid.appendChild(charCard);
+                });
+            } else {
+                // Display default mascots
+                Object.keys(mascots).forEach(key => {
+                    const m = mascots[key];
+                    const isUserMascot = key === dominantTrait;
+                    const mascotCard = document.createElement('div');
+                    mascotCard.className = `mascot-card ${isUserMascot ? `highlighted highlighted-${key}` : ''}`;
+                    mascotCard.innerHTML = `
+                        <div class="mascot-emoji">${m.emoji}</div>
+                        <div class="mascot-name">${m.name}</div>
+                        <div class="mascot-description">${m.description}</div>
+                        ${isUserMascot ? '<div class="user-mascot-badge">IT\'S YOU!</div>' : ''}
+                    `;
+                    mascotsGrid.appendChild(mascotCard);
+                });
+            }
 
             allMascotsSection.appendChild(mascotsGrid);
             container.appendChild(allMascotsSection);
 
             // Persist results so the separate results page can read them
             try {
-                localStorage.setItem('bfi_lastResults', JSON.stringify({ results, dominantTrait }));
+                localStorage.setItem('bfi_lastResults', JSON.stringify({ results, dominantTrait, theme: selectedTheme, themedCharacter: themedCharacter }));
             } catch (e) {
                 console.warn('Could not persist results to localStorage', e);
             }
@@ -411,8 +536,8 @@ const baseQuestions = [
             const viewPageWrapper = document.createElement('div');
             viewPageWrapper.className = 'view-results-page-wrapper';
             viewPageWrapper.innerHTML = `
-                <a class="btn view-results-page-btn" href="results.html" target="_self">Open Results Page</a>
-                <a class="btn" href="index.html">Back to Start</a>
+                <a class="btn view-results-page-btn" href="live results.html" target="_self">📊 See Everyone's Results</a>
+                <a class="btn" href="index.html">🔄 Take Quiz Again</a>
             `;
             container.appendChild(viewPageWrapper);
 
@@ -493,7 +618,7 @@ const baseQuestions = [
         }
     }
 
-    // Expose a simple launcher
+    // confetti!
     window.launchConfetti = function(duration){
         const end = Date.now() + (duration || 3000);
         const centreX = W/2;
@@ -513,33 +638,16 @@ const baseQuestions = [
 
         function handleExport() {
             if (lastResults && lastDominantTrait) {
-                const englishScores = {};
-                const singlishScores = {};
-
-                Object.keys(lastResults.english).forEach(key => {
-                    englishScores[key] = parseFloat(lastResults.english[key].score.toFixed(2));
-                    singlishScores[key] = parseFloat(lastResults.singlish[key].score.toFixed(2));
-                });
-
                 const csvContent = [
                     ['Personality Quiz Results'],
                     ['Timestamp', new Date().toLocaleString()],
                     ['Dominant Trait', mascots[lastDominantTrait].name],
                     [''],
-                    ['ENGLISH VERSION'],
                     ['Trait', 'Score', 'Percentage'],
-                    ...Object.keys(lastResults.english).map(key => [
-                        lastResults.english[key].name,
-                        englishScores[key],
-                        lastResults.english[key].percentage.toFixed(0) + '%'
-                    ]),
-                    [''],
-                    ['SINGLISH VERSION'],
-                    ['Trait', 'Score', 'Percentage'],
-                    ...Object.keys(lastResults.singlish).map(key => [
-                        lastResults.singlish[key].name,
-                        singlishScores[key],
-                        lastResults.singlish[key].percentage.toFixed(0) + '%'
+                    ...Object.keys(lastResults).map(key => [
+                        lastResults[key].name,
+                        parseFloat(lastResults[key].score.toFixed(2)),
+                        lastResults[key].percentage.toFixed(0) + '%'
                     ])
                 ].map(row => Array.isArray(row) ? row.join(',') : row).join('\n');
 

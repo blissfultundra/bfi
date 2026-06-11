@@ -10,10 +10,12 @@
         .results-page { max-width: 1200px; margin: 0 auto; }
         .results-page h1 { color: #fff; font-size: 32px; margin-bottom: 32px; font-weight: 700; }
         /* consolidated layout */
-        .traits-grid { display:flex; gap:24px; flex-wrap:nowrap; align-items:flex-end; overflow-x:auto; padding-bottom:8px; }
-        .results-page .trait-card { width:120px; text-align:center; flex:0 0 auto; background:none; border:none; padding:0; margin-bottom:0; box-shadow:none; }
-        .trait-label { margin-top:12px; font-weight:600; font-size:12px; color: #333; }
-        .trait-perc { margin-bottom:12px; font-weight:700; font-size: 24px; color: #667eea; }
+        .traits-grid { display: flex; flex-direction: column; gap: 24px; padding-bottom: 8px; }
+        .results-page .trait-card { display: flex; align-items: center; gap: 16px; background: none; border: none; padding: 0; margin-bottom: 0; box-shadow: none; }
+        .trait-label { min-width: 120px; font-weight: 600; font-size: 13px; color: #333; text-align: left; }
+        .trait-perc { font-weight: 700; font-size: 18px; color: #667eea; min-width: 40px; text-align: right; }
+        .bar-horizontal { flex: 1; height: 40px; background: #e8e8e8; border-radius: 8px; display: flex; align-items: center; overflow: hidden; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+        .bar-fill { height: 100%; width: 0%; background: #76c7c0; border-radius: 6px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
         /* Average Scores Section */
         .responses-section {
             margin-top: 32px;
@@ -44,8 +46,6 @@
             color: #667eea;
             font-weight: 600;
         }
-        .bar-vertical { width:56px; height:200px; background: #e8e8e8; border-radius: 8px; margin:0 auto; display:flex; align-items:flex-end; overflow:hidden; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
-        .bar-fill { width:100%; background:#76c7c0; border-radius: 6px; transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
         .view-fallback { margin-top: 18px; }
         .btn { display: inline-block; padding: 8px 14px; background:#333; color:#fff; text-decoration:none; border-radius:6px; margin-right:8px; margin-top: 8px; }
     </style>
@@ -70,7 +70,7 @@
     <script>// Average Scores Section
         (function() {
             const avgContainer = document.getElementById('averageScoresContainer');
-            const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyYN_-sXj8Po9RR-E1kKTJcHVYqXwRBzghs4GQvEJkWA2U-RtiNqXSb76avm3datEdQ/exec";
+            const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyOPj99L9Q-3m8IwQRcC6O9nEq4aovOPM-WNibrom61k9jWjIg2VrSJqTnGRBcpjgQ9/exec";
 
             const traits = {
                 E: { name: 'Extraversion', emoji: '🎉', color: '#FF6B6B' },
@@ -132,38 +132,37 @@
 
                 // First time: Create the bars
                 if (!barsInitialized) {
-                    let html = '<div class="traits-grid">';
+                    let html = '';
                     Object.keys(averages).forEach(key => {
                         const trait = averages[key];
-                        const barHeight = (trait.percentage < 0) ? 0 : Math.min(100, trait.percentage);
+                        const barWidth = (trait.percentage < 0) ? 0 : Math.min(100, trait.percentage);
                         html += `
                             <div class="trait-card">
-                                <div class="trait-perc" data-trait="${key}">${trait.displayScore}</div>
-                                <div class="bar-vertical" aria-hidden="true">
-                                    <div class="bar-fill" data-trait="${key}" style="height:${barHeight}%;background:${trait.color}"></div>
+                                <div class="trait-label">${trait.name}</div>
+                                <div class="bar-horizontal" aria-hidden="true">
+                                    <div class="bar-fill" data-trait="${key}" style="width:${barWidth}%;background:${trait.color}"></div>
                                 </div>
-                                <div class="trait-label">${trait.emoji}<br>${trait.name}</div>
+                                <div class="trait-perc" data-trait="${key}">${trait.displayScore}</div>
                             </div>
                         `;
                     });
-                    html += '</div>';
                     avgContainer.innerHTML = html;
                     barsInitialized = true;
                     return;
                 }
 
-                // Subsequent updates: Just update the bar heights and scores
+                // Subsequent updates: Just update the bar widths and scores
                 Object.keys(averages).forEach(key => {
                     const trait = averages[key];
-                    const barHeight = (trait.percentage < 0) ? 0 : Math.min(100, trait.percentage);
+                    const barWidth = (trait.percentage < 0) ? 0 : Math.min(100, trait.percentage);
                     
                     // Update score display
                     const scoreEl = avgContainer.querySelector(`[data-trait="${key}"].trait-perc`);
                     if (scoreEl) scoreEl.textContent = trait.displayScore;
                     
-                    // Update bar height - this triggers the CSS transition
+                    // Update bar width - this triggers the CSS transition
                     const barEl = avgContainer.querySelector(`.bar-fill[data-trait="${key}"]`);
-                    if (barEl) barEl.style.height = barHeight + '%';
+                    if (barEl) barEl.style.width = barWidth + '%';
                 });
             }
 

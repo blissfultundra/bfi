@@ -31,6 +31,49 @@
             </div>
         </div>
 
+        <!-- Theme Selection Screen -->
+        <div class="theme-screen">
+            <div class="header">
+                <h1>Pick Your Theme! 🎨</h1>
+                <p class="subtitle">Choose a theme for your results</p>
+            </div>
+            <div class="theme-grid">
+                <button class="theme-card" onclick="selectTheme('disney_princesses')">
+                    <div class="theme-emoji">👑</div>
+                    <div class="theme-name">Disney Princesses</div>
+                </button>
+                <button class="theme-card" onclick="selectTheme('singapore_dishes')">
+                    <div class="theme-emoji">🍜</div>
+                    <div class="theme-name">Singaporean Dishes</div>
+                </button>
+                <button class="theme-card" onclick="selectTheme('vehicles')">
+                    <div class="theme-emoji">🚗</div>
+                    <div class="theme-name">Vehicles</div>
+                </button>
+                <button class="theme-card" onclick="selectTheme('nucleotide_bases')">
+                    <div class="theme-emoji">🧬</div>
+                    <div class="theme-name">Nucleotide Bases</div>
+                </button>
+                <button class="theme-card" onclick="selectTheme('animals')">
+                    <div class="theme-emoji">🦁</div>
+                    <div class="theme-name">Animals</div>
+                </button>
+            </div>
+            <div class="quiz-history-question">
+                <p class="question-text">Have you done this personality quiz before?</p>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="quiz-history" value="yes" onchange="setQuizHistory('yes')">
+                        <span>Yes, I've done it before</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="quiz-history" value="no" onchange="setQuizHistory('no')">
+                        <span>No, this is my first time</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
         <!-- Quiz Screen -->
         <div class="quiz-screen">
             <div class="header">
