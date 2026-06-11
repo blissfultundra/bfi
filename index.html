@@ -31,6 +31,44 @@
             </div>
         </div>
 
+        <!-- Quiz Screen -->
+        <div class="quiz-screen">
+            <div class="header">
+                <h1>Sibeh Shiok Personality Quiz</h1>
+                <p class="subtitle">Answer based on how you normally behave lah</p>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar"></div>
+                    <div class="progress-percentage" id="progressPercentage">0%</div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-number" id="questionNumber">Question 1 of 20</div>
+                <div class="question-text" id="questionText"></div>
+                <div class="options" id="optionsContainer"></div>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn btn-prev" id="prevBtn" onclick="prevQuestion()">⬅️ Back</button>
+                <button class="btn btn-next" id="nextBtn" onclick="nextQuestion()">Next ➡️</button>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div class="results">
+            <div class="header">
+                <h1>🎉 Your Results!</h1>
+                <p class="subtitle">Here's what kind of Singaporean you are:</p>
+            </div>
+            <div id="resultsContainer"></div>
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="start-btn" onclick="location.reload()">Take Again? 🔄</button>
+            </div>
+        </div>
+
         <!-- Theme Selection Screen -->
         <div class="theme-screen">
             <div class="header">
@@ -71,44 +109,6 @@
                         <span>No, this is my first time</span>
                     </label>
                 </div>
-            </div>
-        </div>
-
-        <!-- Quiz Screen -->
-        <div class="quiz-screen">
-            <div class="header">
-                <h1>Sibeh Shiok Personality Quiz</h1>
-                <p class="subtitle">Answer based on how you normally behave lah</p>
-            </div>
-
-            <div class="progress-container">
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressBar"></div>
-                    <div class="progress-percentage" id="progressPercentage">0%</div>
-                </div>
-            </div>
-
-            <div class="question-card">
-                <div class="question-number" id="questionNumber">Question 1 of 20</div>
-                <div class="question-text" id="questionText"></div>
-                <div class="options" id="optionsContainer"></div>
-            </div>
-
-            <div class="nav-buttons">
-                <button class="btn btn-prev" id="prevBtn" onclick="prevQuestion()">⬅️ Back</button>
-                <button class="btn btn-next" id="nextBtn" onclick="nextQuestion()">Next ➡️</button>
-            </div>
-        </div>
-
-        <!-- Results Screen -->
-        <div class="results">
-            <div class="header">
-                <h1>🎉 Your Results!</h1>
-                <p class="subtitle">Here's what kind of Singaporean you are:</p>
-            </div>
-            <div id="resultsContainer"></div>
-            <div style="text-align: center; margin-top: 30px;">
-                <button class="start-btn" onclick="location.reload()">Take Again? 🔄</button>
             </div>
         </div>
     </div>
