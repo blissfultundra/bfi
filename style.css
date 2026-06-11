@@ -149,6 +149,110 @@ body {
 
 .option-btn.selected .dot { box-shadow: 0 4px 8px rgba(0,0,0,0.12); }
 
+.health-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.health-option-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border: 1px solid rgba(31,31,58,0.06);
+    background: white;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(.2,.9,.2,1);
+    font-size: 0.98rem;
+    box-shadow: 0 6px 18px rgba(31,31,58,0.04);
+}
+
+.health-option-label:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px rgba(31,31,58,0.08);
+}
+
+.health-option-label input[type="radio"] {
+    accent-color: var(--primary-1);
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+}
+
+.health-option-label input[type="radio"]:checked {
+    accent-color: var(--primary-2);
+}
+
+.health-option-label input[type="radio"]:checked + * {
+    font-weight: 600;
+}
+
+.health-option-label:has(input[type="radio"]:checked) {
+    border-color: var(--primary-1);
+    background: linear-gradient(90deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+}
+
+.health-option-label:has(input[type="checkbox"]:checked) {
+    border-color: var(--primary-1);
+    background: linear-gradient(90deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+}
+
+.health-option-label input[type="checkbox"] {
+    accent-color: var(--primary-1);
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+}
+
+.health-scale-container {
+    margin-top: 20px;
+}
+
+.scale-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.health-scale-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.scale-btn {
+    width: 50px;
+    height: 50px;
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    background: white;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #666;
+    transition: all 0.22s cubic-bezier(.2,.9,.2,1);
+}
+
+.scale-btn:hover {
+    border-color: var(--primary-1);
+    color: var(--primary-1);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+}
+
+.scale-btn.selected {
+    background: linear-gradient(135deg, var(--primary-1), var(--primary-2));
+    border-color: var(--primary-1);
+    color: white;
+    box-shadow: 0 10px 28px rgba(102, 126, 234, 0.2);
+}
+
 .nav-buttons {
     display: flex;
     justify-content: space-between;
@@ -290,18 +394,50 @@ body {
     margin-right: 10px;
 }
 
-.intro-screen, .quiz-screen, .theme-screen {
+.intro-screen, .quiz-screen, .theme-screen, .loading-screen, .health-screening-screen {
     display: none !important;
     visibility: hidden !important;
     height: 0 !important;
     overflow: hidden !important;
 }
 
-.intro-screen.active, .quiz-screen.active, .theme-screen.active {
+.intro-screen.active, .quiz-screen.active, .theme-screen.active, .loading-screen.active, .health-screening-screen.active {
     display: block !important;
     visibility: visible !important;
     height: auto !important;
     overflow: visible !important;
+}
+
+.loading-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+}
+
+.loading-content {
+    text-align: center;
+}
+
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 20px;
+    border: 4px solid rgba(102, 126, 234, 0.2);
+    border-top-color: var(--primary-1);
+    border-right-color: var(--primary-2);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-content p {
+    font-size: 1.1rem;
+    color: #666;
+    margin: 0;
 }
 
 .start-btn {
@@ -320,6 +456,18 @@ body {
 .start-btn:hover {
     transform: translateY(-4px) scale(1.01);
     box-shadow: 0 18px 46px rgba(102, 126, 234, 0.18);
+}
+
+.start-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 10px 28px rgba(102, 126, 234, 0.1);
+}
+
+.start-btn:disabled:hover {
+    transform: none;
+    box-shadow: 0 10px 28px rgba(102, 126, 234, 0.1);
 }
 
 .intro-content {
@@ -421,6 +569,18 @@ body {
 
 .theme-card:active {
     transform: translateY(-2px) scale(0.98);
+}
+
+.theme-card.selected {
+    background: linear-gradient(135deg, var(--primary-1), var(--primary-2));
+    border-color: var(--primary-1);
+    color: white;
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 12px 30px rgba(102, 126, 234, 0.3);
+}
+
+.theme-card.selected .theme-name {
+    color: white;
 }
 
 /* Bouncing mascots animation */
@@ -526,18 +686,22 @@ body {
 
 .mascots-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
 }
 
 .mascot-card {
     background: #f8f9fa;
     border: 2px solid #e0e0e0;
     border-radius: 15px;
-    padding: 20px;
+    padding: 30px 20px;
     text-align: center;
     transition: all 0.3s ease;
     position: relative;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .mascot-card:hover {
@@ -653,7 +817,8 @@ body {
 .mascot-name {
     font-weight: bold;
     font-size: 1.2em;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    margin-top: 0;
     color: #333;
 }
 
@@ -661,6 +826,7 @@ body {
     font-size: 0.9em;
     line-height: 1.5;
     color: #666;
+    flex-grow: 1;
 }
 
 .user-mascot-badge {
@@ -785,7 +951,7 @@ body {
     }
     
     .mascots-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 

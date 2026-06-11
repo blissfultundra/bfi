@@ -57,6 +57,40 @@
             </div>
         </div>
 
+        <!-- Loading Screen -->
+        <div class="loading-screen">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <p>Analyzing your personality lah... 🤔</p>
+            </div>
+        </div>
+
+        <!-- Health Screening Screen -->
+        <div class="health-screening-screen">
+            <div class="header">
+                <h1>🏥 Health Screening Section</h1>
+                <p class="subtitle">Please answer a few quick questions</p>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="healthProgressBar"></div>
+                    <div class="progress-percentage" id="healthProgressPercentage">0%</div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-number" id="healthQuestionNumber">Question 1 of 2</div>
+                <div class="question-text" id="healthQuestionText"></div>
+                <div class="health-options" id="healthOptionsContainer"></div>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn btn-prev" id="healthPrevBtn" onclick="prevHealthQuestion()">⬅️ Back</button>
+                <button class="btn btn-next" id="healthNextBtn" onclick="nextHealthQuestion()">Next ➡️</button>
+            </div>
+        </div>
+
         <!-- Results Screen -->
         <div class="results">
             <div class="header">
@@ -64,9 +98,6 @@
                 <p class="subtitle">Here's what kind of Singaporean you are:</p>
             </div>
             <div id="resultsContainer"></div>
-            <div style="text-align: center; margin-top: 30px;">
-                <button class="start-btn" onclick="location.reload()">Take Again? 🔄</button>
-            </div>
         </div>
 
         <!-- Theme Selection Screen -->
@@ -109,6 +140,9 @@
                         <span>No, this is my first time</span>
                     </label>
                 </div>
+            </div>
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="start-btn" id="proceedBtn" onclick="proceedIfReady()" disabled>Okay Lah, Let's Go! 🚀</button>
             </div>
         </div>
     </div>

@@ -85,6 +85,116 @@ const baseQuestions = [
             }
         };
 
+        const healthScreeningQuestions = [
+            {
+                id: "age",
+                question: "What is your age?",
+                type: "radio",
+                options: ["<18 years old", "18 to 24 years old", "25 to 34 years old", "35 to 44 years old", "45 to 54 years old", "55 to 64 years old", "≥65 years old"]
+            },
+            {
+                id: "gender",
+                question: "What is your gender?",
+                type: "radio",
+                options: ["Male", "Female"]
+            },
+            {
+                id: "breast_cancer_importance",
+                question: "How important is breast cancer screening to you personally?",
+                type: "scale",
+                scale: 5,
+                scaleLabels: ["Not important", "Very important"],
+                condition: (responses) => responses["gender"] === "Female"
+            },
+            {
+                id: "breast_cancer_eligible",
+                question: "To your knowledge, are you eligible to go for breast cancer screening?",
+                type: "radio",
+                options: ["Yes", "No"],
+                condition: (responses) => responses["gender"] === "Female"
+            },
+            {
+                id: "mammogram_before",
+                question: "Have you ever had a mammogram before?",
+                type: "radio",
+                options: ["Yes", "No"],
+                condition: (responses) => responses["gender"] === "Female"
+            },
+            {
+                id: "mammogram_last_time",
+                question: "When was the last time you had a mammogram?",
+                type: "radio",
+                options: ["Less than 1 year ago", "1 to 2 years ago", "2 to 5 years ago", "More than 5 years ago"],
+                condition: (responses) => responses["gender"] === "Female" && responses["mammogram_before"] === "Yes"
+            },
+            {
+                id: "mammogram_discomfort_rating",
+                question: "How would you rate the discomfort experienced?",
+                type: "scale",
+                scale: 5,
+                scaleLabels: ["Not uncomfortable", "Very uncomfortable"],
+                condition: (responses) => responses["gender"] === "Female" && responses["mammogram_before"] === "Yes"
+            },
+            {
+                id: "mammogram_discouraging_factors",
+                question: "Which of the following factors may discourage you from going for mammography? Select all that apply.",
+                type: "checkbox",
+                options: ["Time inconvenience", "Monetary cost", "Pain/discomfort by the procedure", "Anxiety over a possible diagnosis", "Others"],
+                condition: (responses) => responses["gender"] === "Female"
+            },
+            {
+                id: "colorectal_cancer_importance",
+                question: "How important is colorectal cancer screening to you personally?",
+                type: "scale",
+                scale: 5,
+                scaleLabels: ["Not important", "Very important"],
+                condition: (responses) => responses["gender"] === "Male"
+            },
+            {
+                id: "colorectal_cancer_eligible",
+                question: "To your knowledge, are you eligible to go for colorectal cancer screening?",
+                type: "radio",
+                options: ["Yes", "No"],
+                condition: (responses) => responses["gender"] === "Male"
+            },
+            {
+                id: "colonoscopy_before",
+                question: "Have you ever had a colonoscopy before?",
+                type: "radio",
+                options: ["Yes", "No"],
+                condition: (responses) => responses["gender"] === "Male"
+            },
+            {
+                id: "colonoscopy_last_time",
+                question: "When was the last time you had a colonoscopy?",
+                type: "radio",
+                options: ["Less than 1 year ago", "1 to 2 years ago", "2 to 5 years ago", "More than 5 years ago"],
+                condition: (responses) => responses["gender"] === "Male" && responses["colonoscopy_before"] === "Yes"
+            },
+            {
+                id: "colonoscopy_discomfort_rating",
+                question: "How would you rate the discomfort experienced?",
+                type: "scale",
+                scale: 5,
+                scaleLabels: ["Not uncomfortable", "Very uncomfortable"],
+                condition: (responses) => responses["gender"] === "Male" && responses["colonoscopy_before"] === "Yes"
+            },
+            {
+                id: "colonoscopy_discouraging_factors",
+                question: "Which of the following factors may discourage you from going for colonoscopy? Select all that apply.",
+                type: "checkbox",
+                options: ["Time inconvenience", "Monetary cost", "Pain/discomfort by the procedure", "Anxiety over a possible diagnosis", "Others"],
+                condition: (responses) => responses["gender"] === "Male"
+            }
+        ];
+
+        function getVisibleQuestions() {
+            return healthScreeningQuestions.filter(q => {
+                if (!q.condition) return true;
+                return q.condition(healthResponses);
+            });
+        }
+
         const themes = {
             disney_princesses: {
                 name: 'Disney Princesses',
@@ -138,7 +248,7 @@ const baseQuestions = [
             }
         };
 
-        const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyOPj99L9Q-3m8IwQRcC6O9nEq4aovOPM-WNibrom61k9jWjIg2VrSJqTnGRBcpjgQ9/exec";
+        const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzTAz1S_UlkCujgoVnDWPSBST2gzzUYu6xiHFGYFICLlTSh7La2tW_q7MNADI48MWfI/exec";
         let currentQuestion = 0;
         let answers = new Array(15).fill(null);
         let lastResults = null;
@@ -146,6 +256,25 @@ const baseQuestions = [
         let confettiPlayed = false;
         let selectedTheme = null;
         let quizHistoryResponse = null;
+
+        // Health Screening state
+        let currentHealthQuestion = 0;
+        let healthResponses = {
+            age: "",
+            gender: "",
+            breast_cancer_importance: "",
+            breast_cancer_eligible: "",
+            mammogram_before: "",
+            mammogram_discouraging_factors: [],
+            mammogram_last_time: "",
+            mammogram_discomfort_rating: "",
+            colorectal_cancer_importance: "",
+            colorectal_cancer_eligible: "",
+            colonoscopy_before: "",
+            colonoscopy_last_time: "",
+            colonoscopy_discomfort_rating: "",
+            colonoscopy_discouraging_factors: []
+        };
 
         function startQuiz() {
             // Show the consent modal when the user clicks "Let's Go!"
@@ -165,7 +294,7 @@ const baseQuestions = [
         }
 
         function selectTheme(theme) {
-            // Store the selected theme and proceed with the quiz
+            // Store the selected theme
             selectedTheme = theme;
             console.log('Selected theme:', theme);
             
@@ -176,8 +305,14 @@ const baseQuestions = [
                 console.warn('Could not persist theme to localStorage', e);
             }
             
-            document.querySelector('.theme-screen').classList.remove('active');
-            proceedWithQuiz();
+            // Highlight the selected theme card
+            document.querySelectorAll('.theme-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.target.closest('.theme-card').classList.add('selected');
+            
+            // Check if both questions are answered
+            checkCanProceed();
         }
 
         function setQuizHistory(response) {
@@ -190,6 +325,27 @@ const baseQuestions = [
                 localStorage.setItem('bfi_quizHistory', response);
             } catch (e) {
                 console.warn('Could not persist quiz history to localStorage', e);
+            }
+            
+            // Check if both questions are answered
+            checkCanProceed();
+        }
+
+        function checkCanProceed() {
+            // Enable the button only if both theme and quiz history are selected
+            const proceedBtn = document.getElementById('proceedBtn');
+            if (selectedTheme && quizHistoryResponse) {
+                proceedBtn.disabled = false;
+            } else {
+                proceedBtn.disabled = true;
+            }
+        }
+
+        function proceedIfReady() {
+            // Final check and proceed to quiz
+            if (selectedTheme && quizHistoryResponse) {
+                document.querySelector('.theme-screen').classList.remove('active');
+                proceedWithQuiz();
             }
         }
 
@@ -263,7 +419,192 @@ const baseQuestions = [
                 currentQuestion++;
                 displayQuestion();
             } else {
+                // Show loading screen for 0.5 seconds before displaying health screening
+                document.querySelector('.quiz-screen').classList.remove('active');
+                document.querySelector('.loading-screen').classList.add('active');
+                
+                setTimeout(() => {
+                    document.querySelector('.loading-screen').classList.remove('active');
+                    document.querySelector('.health-screening-screen').classList.add('active');
+                    // Initialize and display first health question
+                    currentHealthQuestion = 0;
+                    healthResponses = {
+                        age: "",
+                        gender: "",
+                        breast_cancer_importance: "",
+                        breast_cancer_eligible: "",
+                        mammogram_before: "",
+                        mammogram_discouraging_factors: [],
+                        mammogram_last_time: "",
+                        mammogram_discomfort_rating: "",
+                        colorectal_cancer_importance: "",
+                        colorectal_cancer_eligible: "",
+                        colonoscopy_before: "",
+                        colonoscopy_last_time: "",
+                        colonoscopy_discomfort_rating: "",
+                        colonoscopy_discouraging_factors: []
+                    };
+                    displayHealthQuestion();
+                }, 500);
+            }
+        }
+
+        function proceedToFinalResults() {
+            // Post health screening data to Google Sheets
+            postHealthScreeningToSheet();
+            
+            // Show loading screen for 0.5 seconds before displaying final results
+            document.querySelector('.health-screening-screen').classList.remove('active');
+            document.querySelector('.loading-screen').classList.add('active');
+            
+            setTimeout(() => {
+                document.querySelector('.loading-screen').classList.remove('active');
                 showResults();
+            }, 500);
+        }
+
+        function displayHealthQuestion() {
+            const visibleQuestions = getVisibleQuestions();
+            const question = visibleQuestions[currentHealthQuestion];
+            const totalVisible = visibleQuestions.length;
+            
+            document.getElementById('healthQuestionNumber').textContent = `Question ${currentHealthQuestion + 1} of ${totalVisible}`;
+            document.getElementById('healthQuestionText').textContent = question.question;
+            
+            // Update progress bar
+            const progress = ((currentHealthQuestion + 1) / totalVisible) * 100;
+            document.getElementById('healthProgressBar').style.width = progress + '%';
+            document.getElementById('healthProgressPercentage').textContent = Math.round(progress) + '%';
+            
+            // Render options based on question type
+            const optionsContainer = document.getElementById('healthOptionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            if (question.type === 'radio') {
+                question.options.forEach((option, index) => {
+                    const label = document.createElement('label');
+                    label.className = 'health-option-label';
+                    
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.name = `health-${question.id}`;
+                    input.value = option;
+                    input.checked = healthResponses[question.id] === option;
+                    input.onchange = () => selectHealthOption(question.id, option);
+                    
+                    label.appendChild(input);
+                    label.appendChild(document.createTextNode(option));
+                    optionsContainer.appendChild(label);
+                });
+            } else if (question.type === 'checkbox') {
+                question.options.forEach((option, index) => {
+                    const label = document.createElement('label');
+                    label.className = 'health-option-label';
+                    
+                    const input = document.createElement('input');
+                    input.type = 'checkbox';
+                    input.name = `health-${question.id}`;
+                    input.value = option;
+                    input.checked = healthResponses[question.id].includes(option);
+                    input.onchange = () => selectHealthCheckbox(question.id, option);
+                    
+                    label.appendChild(input);
+                    label.appendChild(document.createTextNode(option));
+                    optionsContainer.appendChild(label);
+                });
+            } else if (question.type === 'scale') {
+                const scaleContainer = document.createElement('div');
+                scaleContainer.className = 'health-scale-container';
+                
+                const scaleLabelsDiv = document.createElement('div');
+                scaleLabelsDiv.className = 'scale-labels';
+                scaleLabelsDiv.innerHTML = `<span>${question.scaleLabels[0]}</span><span>${question.scaleLabels[1]}</span>`;
+                scaleContainer.appendChild(scaleLabelsDiv);
+                
+                const scaleButtonsDiv = document.createElement('div');
+                scaleButtonsDiv.className = 'health-scale-buttons';
+                
+                for (let i = 1; i <= question.scale; i++) {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'scale-btn';
+                    if (healthResponses[question.id] === i) btn.classList.add('selected');
+                    btn.textContent = i;
+                    btn.onclick = () => selectHealthScale(question.id, i);
+                    scaleButtonsDiv.appendChild(btn);
+                }
+                
+                scaleContainer.appendChild(scaleButtonsDiv);
+                optionsContainer.appendChild(scaleContainer);
+            }
+            
+            // Update button states
+            document.getElementById('healthPrevBtn').disabled = currentHealthQuestion === 0;
+            
+            let isAnswered = false;
+            if (question.type === 'checkbox') {
+                isAnswered = healthResponses[question.id].length > 0;
+            } else {
+                isAnswered = healthResponses[question.id] !== "";
+            }
+            document.getElementById('healthNextBtn').disabled = !isAnswered;
+            
+            // Change next button text if on last question
+            if (currentHealthQuestion === totalVisible - 1) {
+                document.getElementById('healthNextBtn').textContent = 'See Results ✨';
+            } else {
+                document.getElementById('healthNextBtn').textContent = 'Next ➡️';
+            }
+        }
+
+        function selectHealthOption(questionId, option) {
+            healthResponses[questionId] = option;
+            document.getElementById('healthNextBtn').disabled = false;
+        }
+
+        function selectHealthCheckbox(questionId, option) {
+            const index = healthResponses[questionId].indexOf(option);
+            if (index > -1) {
+                healthResponses[questionId].splice(index, 1);
+            } else {
+                healthResponses[questionId].push(option);
+            }
+            document.getElementById('healthNextBtn').disabled = healthResponses[questionId].length === 0;
+        }
+
+        function selectHealthScale(questionId, value) {
+            healthResponses[questionId] = value;
+            // Update button UI
+            document.querySelectorAll('.scale-btn').forEach(btn => btn.classList.remove('selected'));
+            event.target.classList.add('selected');
+            document.getElementById('healthNextBtn').disabled = false;
+        }
+
+        function nextHealthQuestion() {
+            const visibleQuestions = getVisibleQuestions();
+            const question = visibleQuestions[currentHealthQuestion];
+            
+            let isAnswered = false;
+            if (question.type === 'checkbox') {
+                isAnswered = healthResponses[question.id].length > 0;
+            } else {
+                isAnswered = healthResponses[question.id] !== "";
+            }
+            
+            if (!isAnswered) return;
+            
+            if (currentHealthQuestion < visibleQuestions.length - 1) {
+                currentHealthQuestion++;
+                displayHealthQuestion();
+            } else {
+                proceedToFinalResults();
+            }
+        }
+
+        function prevHealthQuestion() {
+            if (currentHealthQuestion > 0) {
+                currentHealthQuestion--;
+                displayHealthQuestion();
             }
         }
 
@@ -396,6 +737,59 @@ const baseQuestions = [
             })
             .catch(error => {
                 console.error('Error posting to Google Sheets:', error);
+            });
+        }
+
+        function postHealthScreeningToSheet() {
+            console.log('Posting health screening data to Google Sheets - Responses:', healthResponses);
+
+            const exportData = {
+                timestamp: new Date().toLocaleString(),
+                age: healthResponses.age || 'not specified',
+                gender: healthResponses.gender || 'not specified'
+            };
+
+            // Add gender-specific fields
+            if (healthResponses.gender === "Female") {
+                exportData.breast_cancer_importance = healthResponses.breast_cancer_importance || 'not specified';
+                exportData.breast_cancer_eligible = healthResponses.breast_cancer_eligible || 'not specified';
+                exportData.mammogram_before = healthResponses.mammogram_before || 'not specified';
+                exportData.mammogram_last_time = healthResponses.mammogram_last_time || 'n/a';
+                exportData.mammogram_discomfort_rating = healthResponses.mammogram_discomfort_rating || 'n/a';
+                exportData.mammogram_discouraging_factors = (healthResponses.mammogram_discouraging_factors && healthResponses.mammogram_discouraging_factors.length > 0) ? healthResponses.mammogram_discouraging_factors.join('; ') : 'none';
+            } else if (healthResponses.gender === "Male") {
+                exportData.colorectal_cancer_importance = healthResponses.colorectal_cancer_importance || 'not specified';
+                exportData.colorectal_cancer_eligible = healthResponses.colorectal_cancer_eligible || 'not specified';
+                exportData.colonoscopy_before = healthResponses.colonoscopy_before || 'not specified';
+                exportData.colonoscopy_last_time = healthResponses.colonoscopy_last_time || 'n/a';
+                exportData.colonoscopy_discomfort_rating = healthResponses.colonoscopy_discomfort_rating || 'n/a';
+                exportData.colonoscopy_discouraging_factors = (healthResponses.colonoscopy_discouraging_factors && healthResponses.colonoscopy_discouraging_factors.length > 0) ? healthResponses.colonoscopy_discouraging_factors.join('; ') : 'none';
+            }
+
+            if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+                console.log('Google Sheets integration not configured. Health screening data:', exportData);
+                return;
+            }
+
+            const params = new URLSearchParams();
+            params.append('action', 'health_screening');
+            Object.entries(exportData).forEach(([key, value]) => {
+                params.append(key, value);
+            });
+
+            fetch(GOOGLE_APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                },
+                body: params.toString()
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Health screening data posted to Google Sheets');
+            })
+            .catch(error => {
+                console.error('Error posting health screening data to Google Sheets:', error);
             });
         }
 
